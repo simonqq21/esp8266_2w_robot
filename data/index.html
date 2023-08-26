@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            font-family: Arial, serif;
+        }
+
+        header {
+            padding: 0.1em 1.5em;
+            background: #abcdef;
+        }
+
+        #joystickContainer {
+        
+        }
+
+        #instructions {
+        
+        }
+
+        #toggleControls { 
+        
+        }
+
+        #joystickContainer {
+            margin: 20px;
+        }
+
+        #joystick {
+            width: 200px;
+            height: 200px;
+            
+            transform-origin: left top;
+        }
+
+    </style>
+    <script src="jquery_3.7.js"></script>
+</head>  
+<body onload="process()">
+    <header>
+        <h1>ESP8266 WiFi robot</h1>
+    </header>
+    <div id="controls">
+        <div id="joystickContainer">
+            <object data="joystick.svg" type="image/svg+xml" style="margin:0;" id="joystick">
+                <!-- Fallback content or text for non-supporting browsers -->
+            </object>
+        </div> 
+        </div id="toggleControls">
+            <input type="checkbox" id="lights" name="lights" value="lights">
+            <label for="lights">Lights</label>
+            <input type="button" id="honk" name="honk" value="honk">
+            <label for="honk">Honk</label>
+        </div> 
+        <div id="instructions">
+            <h2>Instructions</h2>
+            <p>Move the joystick with your mouse or finger to move the robot.</p>
+            <p>On a desktop browser, the WASD keys can be used to move the robot 
+                and the - and + keys can be used to adjust the speed.</p>
+            <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p>
+            <p>The toggle controls below control the lights and the buzzer horn.</p>    
+        </div>
+    </div>
+           
+</body>
+<script type="text/javascript">
+    function process() {
+    
+    }
+</script>
+</html>
