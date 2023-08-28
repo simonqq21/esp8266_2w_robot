@@ -85,14 +85,14 @@
 
     $(document).ready(function() {
         // alert(isTouchEnabled());
-        if (isTouchEnabled()) {
-            $("*").onmousedown = ""; 
-            $("*").onmouseup = "";
-        }
-        else {
-            $("*").ontouchstart = ""; 
-            $("*").ontouchend = "";
-        } 
+        // if (isTouchEnabled()) {
+        //     $("*").onmousedown = ""; 
+        //     $("*").onmouseup = "";
+        // }
+        // else {
+        //     $("*").ontouchstart = ""; 
+        //     $("*").ontouchend = "";
+        // } 
 
         const joystick = $("#joystick_svg");
         joystick.on("load", function() {
@@ -112,36 +112,95 @@
             const origY = (stickRect.top + stickRect.bottom) / 2;
             console.log(origX, ", ", origY);
 
-            stickGroup.on("mousedown", function (event) {
+            stickGroup.bind("mousedown touchstart", function (event) {
+                if (isTouchEnabled()) {
+                    event.preventDefault();
+                }
                 isDragging = true;
                 // offsetX = event.offsetX;
                 // offsetY = event.offsetY;
                 // console.log(offsetX, ", ", offsetY);
             });
-            // const SVGStickMatrix = stickGroup.getCTM().inverse();
-            // console.log(SVGStickMatrix);
+            
+            const joystickObj2 = document.getElementById("joystick_svg");
+            const joystickDoc2 = joystickObj2.contentDocument;
+            const stickGroup2 = joystickDoc2.querySelector("#stick_group");
+            console.log(stickGroup2 instanceof SVGGraphicsElement);
+            const SVGStickMatrix = stickGroup2.getScreenCTM().inverse();
 
-            joystickDoc.on("mousemove", function(event) {
+            let p;
+
+            joystickDoc.bind("mousemove touchmove", function(event) {
+                if (isTouchEnabled()) {
+                    event.preventDefault();
+                }
+
                 if (isDragging) {
                     stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
                     stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
 
-                    translateX = event.clientX - origX;
-                    translateY = event.clientY - origY;
+                    let inputX, inputY;
+                    if (isTouchEnabled()) {
+                        inputX = event.touches[0].clientX;
+                        inputY = event.touches[0].clientY;
+                    }
+                    else {
+                        inputX = event.clientX;
+                        inputY = event.clientY;
+                    }
+
+                    translateX = inputX - origX;
+                    translateY = inputY - origY;
                     
                     translateX = translateX * 2.14;
                     translateY = translateY * 2.14; 
 
-                    console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
-                    stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+                    p = new DOMPoint(translateX, translateY);
+                    let points = p.matrixTransform(SVGStickMatrix);
+                    console.log(translateX, translateY, points); 
+
+                    // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
+                    // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+                    stickGroup.attr("transform", `translate(${points.x},${points.y})`);
                 }
             });
 
-            joystickDoc.on("mouseup", function () {
+            joystickDoc.bind("mouseup touchend", function () {
+                if (isTouchEnabled()) {
+                    event.preventDefault();
+                }
                 isDragging = false;
                 stickGroup.attr("transform", "translate(0,0)");
             });
+            
+            // stickGroup.ontouchstart(function (event) {
+            //     isDragging = true;
+            //     // offsetX = event.offsetX;
+            //     // offsetY = event.offsetY;
+            //     // console.log(offsetX, ", ", offsetY);
+            // });
 
+            // joystickDoc.ontouchmove(function(event) {
+            //     if (isDragging) {
+            //         stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
+            //         stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
+
+            //         translateX = event.clientX - origX;
+            //         translateY = event.clientY - origY;
+                    
+            //         translateX = translateX * 2.14;
+            //         translateY = translateY * 2.14; 
+
+            //         // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
+            //         // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+            //         stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+            //     }
+            // });
+            
+            // joystickDoc.ontouchend(function () {
+            //     isDragging = false;
+            //     stickGroup.attr("transform", "translate(0,0)");
+            // });
             // .mousemove(function(event) {
             //     const mouseX = event.pageX;
             //     const mouseY = event.pageY;
