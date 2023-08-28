@@ -46,6 +46,8 @@
             width: 220px;
             height: 220px;
             border: none;
+            transform: scale(0.5);
+            transform-origin: top left;
         }
 
     </style>
@@ -57,8 +59,38 @@
     </header>
     <div id="controls">
         <div id="joystickContainer">
-            <iframe src="joystick.html" id="joystick_svg" content="text/html" charset="UTF-8">
-            </iframe>
+            <div id="joystick_svg">
+                <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="400" fill="#1E1E1E"/>
+                <g id="joystick">
+                <g clip-path="url(#clip0_0_1)">
+                <rect width="400" height="400" fill="#D9D9D9"/>
+                
+                <g id="actuation_area_group">
+                <circle id="actuation_area" cx="200" cy="200" r="200" fill="#666666"/>
+                </g>
+                
+                <g id="stick_group">
+                <circle id="stick" cx="200" cy="200" r="75" fill="#00FFC2"/>
+                </g>
+                
+                <g id="directional_markers">
+                <path id="left_marker" d="M38 200L75.5 148.038V251.962L38 200Z" fill="#D9D9D9"/>
+                <path id="right_marker" d="M362 200L324.5 251.962V148.038L362 200Z" fill="#D9D9D9"/>
+                <path id="up_marker" d="M200 38L251.962 75.5H148.038L200 38Z" fill="#D9D9D9"/>
+                <path id="down_marker" d="M200 362L148.038 324.5H251.962L200 362Z" fill="#D9D9D9"/>
+                </g>
+                
+                </g>
+                <rect x="0.5" y="0.5" width="399" height="399" stroke="black"/>
+                </g>
+                <defs>
+                <clipPath id="clip0_0_1">
+                <rect width="400" height="400" fill="white"/>
+                </clipPath>
+                </defs>
+                </svg>
+            </div>
         </div> 
         <div id="toggleControls">
             <div>
@@ -84,132 +116,88 @@
      
 
     $(document).ready(function() {
-        // alert(isTouchEnabled());
-        // if (isTouchEnabled()) {
-        //     $("*").onmousedown = ""; 
-        //     $("*").onmouseup = "";
-        // }
-        // else {
-        //     $("*").ontouchstart = ""; 
-        //     $("*").ontouchend = "";
-        // } 
+        const joystick = $("#joystickContainer");
+        const stickGroup = $("#stick_group");
+        const actuationArea = $("#actuation_area_group");
+        
+        let isDragging = false; 
+        let offsetX, offsetY; 
+        let newX, newY;
+        let stickCenterX, stickCenterY;
+        let translateX, translateY;
 
-        const joystick = $("#joystick_svg");
-        joystick.on("load", function() {
-            
-            const joystickObj = $("#joystick_svg");
-            const joystickDoc = joystickObj.contents();
-            const stickGroup = joystickDoc.find("#stick_group");
-            
-            let isDragging = false; 
-            let offsetX, offsetY; 
-            let newX, newY;
-            let stickCenterX, stickCenterY;
-            let translateX, translateY;
+        let stickRect = stickGroup.get(0).getBoundingClientRect();
+        const origX = (stickRect.left + stickRect.right) / 2;
+        const origY = (stickRect.top + stickRect.bottom) / 2;
+        console.log(origX, ", ", origY);
 
-            let stickRect = stickGroup.get(0).getBoundingClientRect();
-            const origX = (stickRect.left + stickRect.right) / 2;
-            const origY = (stickRect.top + stickRect.bottom) / 2;
-            console.log(origX, ", ", origY);
-
-            stickGroup.bind("mousedown touchstart", function (event) {
-                if (isTouchEnabled()) {
-                    event.preventDefault();
-                }
-                isDragging = true;
-                // offsetX = event.offsetX;
-                // offsetY = event.offsetY;
-                // console.log(offsetX, ", ", offsetY);
-            });
-            
-            const joystickObj2 = document.getElementById("joystick_svg");
-            const joystickDoc2 = joystickObj2.contentDocument;
-            const stickGroup2 = joystickDoc2.querySelector("#stick_group");
-            console.log(stickGroup2 instanceof SVGGraphicsElement);
-            const SVGStickMatrix = stickGroup2.getScreenCTM().inverse();
-
-            let p;
-
-            joystickDoc.bind("mousemove touchmove", function(event) {
-                if (isTouchEnabled()) {
-                    event.preventDefault();
-                }
-
-                if (isDragging) {
-                    stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
-                    stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
-
-                    let inputX, inputY;
-                    if (isTouchEnabled()) {
-                        inputX = event.touches[0].clientX;
-                        inputY = event.touches[0].clientY;
-                    }
-                    else {
-                        inputX = event.clientX;
-                        inputY = event.clientY;
-                    }
-
-                    translateX = inputX - origX;
-                    translateY = inputY - origY;
-                    
-                    translateX = translateX * 2.14;
-                    translateY = translateY * 2.14; 
-
-                    p = new DOMPoint(translateX, translateY);
-                    let points = p.matrixTransform(SVGStickMatrix);
-                    console.log(translateX, translateY, points); 
-
-                    // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
-                    // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-                    stickGroup.attr("transform", `translate(${points.x},${points.y})`);
-                }
-            });
-
-            joystickDoc.bind("mouseup touchend", function () {
-                if (isTouchEnabled()) {
-                    event.preventDefault();
-                }
-                isDragging = false;
-                stickGroup.attr("transform", "translate(0,0)");
-            });
-            
-            // stickGroup.ontouchstart(function (event) {
-            //     isDragging = true;
-            //     // offsetX = event.offsetX;
-            //     // offsetY = event.offsetY;
-            //     // console.log(offsetX, ", ", offsetY);
-            // });
-
-            // joystickDoc.ontouchmove(function(event) {
-            //     if (isDragging) {
-            //         stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
-            //         stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
-
-            //         translateX = event.clientX - origX;
-            //         translateY = event.clientY - origY;
-                    
-            //         translateX = translateX * 2.14;
-            //         translateY = translateY * 2.14; 
-
-            //         // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
-            //         // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-            //         stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-            //     }
-            // });
-            
-            // joystickDoc.ontouchend(function () {
-            //     isDragging = false;
-            //     stickGroup.attr("transform", "translate(0,0)");
-            // });
-            // .mousemove(function(event) {
-            //     const mouseX = event.pageX;
-            //     const mouseY = event.pageY;
-            //     
-            // });
+        stickGroup.on("mousedown touchstart", function (event) {
+            // if (isTouchEnabled()) {
+            //     event.preventDefault();
+            // }
+            // alert("X");
+            isDragging = true;
+            // offsetX = event.offsetX;
+            // offsetY = event.offsetY;
+            // console.log(offsetX, ", ", offsetY);
         });
 
+        function throttle(callback, delay) {
+            let lastCall = 0; 
+            return function(...args) {
+                const now = new Date().getTime(); 
+                if (now - lastCall < delay) return;
+                lastCall = now;
+                callback.apply(this, args);
+            };
+        }
+
+        const throttledHandler = throttle(function(event) {
+            if (isTouchEnabled()) {
+                event.preventDefault();
+            }
+
+            if (isDragging) {
+                stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
+                stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
+
+                let inputX, inputY;
+                if (isTouchEnabled()) {
+                    inputX = event.touches[0].clientX;
+                    inputY = event.touches[0].clientY;
+                }
+                else {
+                    inputX = event.clientX;
+                    inputY = event.clientY;
+                }
+
+                translateX = inputX - origX;
+                translateY = inputY - origY;
+                
+                translateX = translateX * 2.14;
+                translateY = translateY * 2.14; 
+
+                // p = new DOMPoint(translateX, translateY);
+                // let points = p.matrixTransform(SVGStickMatrix);
+                // console.log(translateX, translateY, points); 
+
+                // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
+                // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+                stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+            }
+        }, 10);
         
+        $("#joystick_svg").on("mousemove touchmove", throttledHandler);
+
+        $(document).on("mouseup touchend", function () {
+            // if (isTouchEnabled()) {
+            //     event.preventDefault();
+            // }
+            isDragging = false;
+            stickGroup.attr("transform", "translate(0,0)");
+        });
     });
+
     
     
 
