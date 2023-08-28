@@ -13,10 +13,6 @@
             background: #abcdef;
         }
 
-        #joystickContainer {
-        
-        }
-
         #instructions {
         
         }
@@ -46,25 +42,23 @@
             background-color: orange;
         }
 
-        #joystick {
-            width: 200px;
-            height: 200px;
-            
-            transform-origin: left top;
+        #joystick_svg {
+            width: 220px;
+            height: 220px;
+            border: none;
         }
 
     </style>
-    <script src="jquery_3.7.js"></script>
+    <script src="jquery_min.js"></script>
 </head>  
-<body onload="process()">
+<body>
     <header>
         <h1>ESP8266 WiFi robot</h1>
     </header>
     <div id="controls">
         <div id="joystickContainer">
-            <object data="joystick.svg" type="image/svg+xml" id="joystick">
-                <!-- Fallback content or text for non-supporting browsers -->
-            </object>
+            <iframe src="joystick.html" id="joystick_svg">
+            </iframe>
         </div> 
         <div id="toggleControls">
             <div>
@@ -86,8 +80,33 @@
            
 </body>
 <script type="text/javascript">
-    function process() {
+    $(document).ready(function() {
+        // alert(isTouchEnabled());
+        if (isTouchEnabled()) {
+            $("*").onmousedown = ""; 
+            $("*").onmouseup = "";
+        }
+        else {
+            $("*").ontouchstart = ""; 
+            $("*").ontouchend = "";
+        } 
+        
+        // alert("loaded");
+        const joystick = document.getElementById("joystick_svg");
+        joystick.addEventListener("load", function() {
+            alert("joystick");
+            const $joystickObj = $("#joystick_svg");
+            const $joystickDoc = $joystickObj.contents();
+            const $stick = $joystickDoc.find("#stick_group");
+            alert($stick);
+            // $stick.hide();       
+        });
+    });
     
+    function isTouchEnabled() {
+        return ('ontouchstart' in window) || 
+            (navigator.maxTouchPoints > 0) || 
+            (navigator.msMaxTouchPoints > 0);
     }
 </script>
 </html>

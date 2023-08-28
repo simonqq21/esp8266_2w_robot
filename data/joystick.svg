@@ -3,18 +3,22 @@
 <g id="joystick">
 <g clip-path="url(#clip0_0_1)">
 <rect width="400" height="400" fill="#D9D9D9"/>
+
 <g id="actuation_area_group">
 <circle id="actuation_area" cx="200" cy="200" r="200" fill="#666666"/>
 </g>
-<g id="joystick_group">
-<circle id="joystick_2" cx="200" cy="200" r="75" fill="#00FFC2"/>
+
+<g id="stick_group">
+<circle id="stick" cx="200" cy="200" r="75" fill="#00FFC2"/>
 </g>
+
 <g id="directional_markers">
 <path id="left_marker" d="M38 200L75.5 148.038V251.962L38 200Z" fill="#D9D9D9"/>
 <path id="right_marker" d="M362 200L324.5 251.962V148.038L362 200Z" fill="#D9D9D9"/>
 <path id="up_marker" d="M200 38L251.962 75.5H148.038L200 38Z" fill="#D9D9D9"/>
 <path id="down_marker" d="M200 362L148.038 324.5H251.962L200 362Z" fill="#D9D9D9"/>
 </g>
+
 </g>
 <rect x="0.5" y="0.5" width="399" height="399" stroke="black"/>
 </g>
