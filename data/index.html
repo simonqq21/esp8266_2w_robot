@@ -151,8 +151,8 @@
                 callback.apply(this, args);
             };
         }
-
-        const throttledHandler = throttle(function(event) {
+        
+        $("#joystick_svg").on("mousemove touchmove", function(event) {
             if (isTouchEnabled()) {
                 event.preventDefault();
             }
@@ -173,9 +173,14 @@
 
                 translateX = inputX - origX;
                 translateY = inputY - origY;
-                
                 translateX = translateX * 2.14;
                 translateY = translateY * 2.14; 
+
+                distance = Math.sqrt(Math.pow(translateX, 2) + Math.pow(translateY, 2));
+                if (distance <= 100*2.14) {
+                    stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+                }
+                
 
                 // p = new DOMPoint(translateX, translateY);
                 // let points = p.matrixTransform(SVGStickMatrix);
@@ -183,11 +188,9 @@
 
                 // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
                 // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-                stickGroup.attr("transform", `translate(${translateX},${translateY})`);
+                
             }
-        }, 10);
-        
-        $("#joystick_svg").on("mousemove touchmove", throttledHandler);
+        });
 
         $(document).on("mouseup touchend", function () {
             // if (isTouchEnabled()) {
