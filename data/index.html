@@ -22,11 +22,28 @@
         }
 
         #toggleControls { 
-        
+            display: flex;
+            justify-content: center;
+            
         }
 
         #joystickContainer {
             margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        input[type="button"] {
+            height: 40px;
+            min-width: 50px;
+            border-radius: 20px;
+            margin: 10px 2px 0;
+            font-size: 15px;
+            color: black;
+        }
+
+        #honk {
+            background-color: orange;
         }
 
         #joystick {
@@ -45,15 +62,17 @@
     </header>
     <div id="controls">
         <div id="joystickContainer">
-            <object data="joystick.svg" type="image/svg+xml" style="margin:0;" id="joystick">
+            <object data="joystick.svg" type="image/svg+xml" id="joystick">
                 <!-- Fallback content or text for non-supporting browsers -->
             </object>
         </div> 
-        </div id="toggleControls">
-            <input type="checkbox" id="lights" name="lights" value="lights">
-            <label for="lights">Lights</label>
-            <input type="button" id="honk" name="honk" value="honk">
-            <label for="honk">Honk</label>
+        <div id="toggleControls">
+            <div>
+                <input type="checkbox" id="lights" name="lights" value="lights">
+                <label for="lights">Lights</label>
+                <input type="button" id="honk" name="honk" value="honk">
+                <label for="honk">Honk</label>
+            </div>
         </div> 
         <div id="instructions">
             <h2>Instructions</h2>
