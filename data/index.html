@@ -8,7 +8,7 @@
             font-family: Arial, serif;
         }
 
-        #movementControls {
+        #movementControls, #toggleControls {
             display: block;
             text-align: center;
         }
@@ -21,17 +21,15 @@
             display: grid;
             grid-template-columns: auto auto auto;
             align-items: center;
-            width: 40%;
-
         }
 
         div {
             margin: 0.5vw;
         }
 
-        .none {
-            height: 50px;
-            width: 50px;
+        .dpad_spacer {
+            height: 6vw;
+            width: 6vw;
             margin: 0;
         }
 
@@ -41,8 +39,14 @@
         }
 
         .dpad_image {
-            height: 9vh;
-            width: 9vh;
+            height: 6vw;
+            width: 6vw;
+            padding: 0;
+        }
+
+        #lights_icon, #beep_icon {
+            height: 2vw;
+            width: 2vw;
             padding: 0;
         }
 
@@ -85,35 +89,63 @@
         <div id="movementControls">
             <div id="dpad_grid_container">
                 <div id="dpad_grid">
-                    <div class="none"></div>
-                    <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"></button>
-                    <div class="none"></div>
-                    <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"></button>
-                    <div class="none"></div>
-                    <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"></button>
-                    <div class="none"></div>
-                    <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"></button>
-                    <div class="none"></div>
+                    <div class="dpad_spacer"></div>
+                    <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
+                        onmousedown="move('forward')"
+                        onmouseup=""
+                        ontouchstart=""
+                        ontouchend=""
+                    ></button>
+                    <div class="dpad_spacer"></div>
+                    <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"
+                        onmousedown="move('forward')"
+                        onmouseup=""
+                        ontouchstart=""
+                        ontouchend=""
+                    ></button>
+                    <div class="dpad_spacer"></div>
+                    <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
+                        onmousedown="move('forward')"
+                        onmouseup=""
+                        ontouchstart=""
+                        ontouchend=""
+                    ></button>
+                    <div class="dpad_spacer"></div>
+                    <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
+                        onmousedown="move('forward')"
+                        onmouseup=""
+                        ontouchstart=""
+                        ontouchend=""
+                    ></button>
+                    <div class="dpad_spacer"></div>
                 </div>
             </div>
             <div id="speedControl">
                 <label for="speed" style="margin: 0 1.5vw 0;">Speed adjustment:  </label>
-                <input type="range" id="speed" name="speed" class="range1"></input>
+                <input type="range" id="speed" name="speed" class="range1" 
+                    oninput=""
+                ></input>
             </div>
             <div id="trimControl">
                 <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
-                <input type="range" id="trim" name="trim" class="range1"></input>
+                <input type="range" id="trim" name="trim" class="range1"
+                    oninput=""
+                ></input>
             </div>
 
         </div>
         
         <div id="toggleControls">
             <div id="lightControl">
-                <input type="checkbox" id="lights" name="lights" value="lights">
+                <button id="lights" name="lights" value="lights"
+                    oninput=""
+                ><img src="lights.svg" id="lights_icon" alt="Lights"></button>
                 <label for="lights">Lights</label>
             </div>
             <div if="beepControl">
-                <input type="checkbox" id="beep" name="beep" value="beep">
+                <button id="beep" name="beep" value="beep"
+                    oninput=""
+                ><img src="horn.svg" id="beep_icon" alt="Beep"></button>
                 <label for="beep">Beep</label>
             </div>
         </div> 
@@ -129,8 +161,12 @@
            
 </body>
 <script type="text/javascript">
+    let gateway = `ws://${window.location.hostname}/ws`;
+    let websocket; 
+
     $(document).ready(function() {
-        });
+
+    });
 
     function isTouchEnabled() {
         return ('ontouchstart' in window) || 
