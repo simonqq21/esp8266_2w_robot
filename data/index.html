@@ -102,31 +102,31 @@
                 <div id="dpad_grid">
                     <div class="dpad_spacer"></div>
                     <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
-                        onmousedown="move('forward')"
-                        onmouseup=""
-                        ontouchstart=""
-                        ontouchend=""
+                        onmousedown="move('forward');"
+                        onmouseup="move('');"
+                        ontouchstart="move('forward');"
+                        ontouchend="move('');"
                     ></button>
                     <div class="dpad_spacer"></div>
                     <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"
-                        onmousedown="move('forward')"
-                        onmouseup=""
-                        ontouchstart=""
-                        ontouchend=""
+                        onmousedown="move('left');"
+                        onmouseup="move('');"
+                        ontouchstart="move('left');"
+                        ontouchend="move('');"
                     ></button>
                     <div class="dpad_spacer"></div>
                     <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
-                        onmousedown="move('forward')"
-                        onmouseup=""
-                        ontouchstart=""
-                        ontouchend=""
+                        onmousedown="move('right')"
+                        onmouseup="move('');"
+                        ontouchstart="move('right')"
+                        ontouchend="move('');"
                     ></button>
                     <div class="dpad_spacer"></div>
                     <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
-                        onmousedown="move('forward')"
-                        onmouseup=""
-                        ontouchstart=""
-                        ontouchend=""
+                        onmousedown="move('backward');"
+                        onmouseup="move('');"
+                        ontouchstart="move('backward');"
+                        ontouchend="move('');"
                     ></button>
                     <div class="dpad_spacer"></div>
                 </div>
@@ -149,7 +149,7 @@
         <div id="toggleControls">
             <div id="lightControl">
                 <button id="lights" name="lights" value="lights"
-                    oninput=""
+                    onclick="toggleLights('toggle');"
                 ><img src="lights.svg" id="lights_icon" alt="Lights"></button>
                 <label for="lights">Lights</label>
             </div>
@@ -178,6 +178,14 @@
     let gateway = `ws://${window.location.hostname}/ws`;
     let websocket; 
 
+    // status update JSON format
+    let robotStatus = {   
+        'lightState': false,
+        'beepState': false,
+        'lmotor_power': 0,
+        'rmotor_power': 0
+    }
+
     function initWebSocket() {
         // alert('Websocket initializing');
         websocket = new WebSocket(gateway);
@@ -199,14 +207,7 @@
 
     // runs when websocket receives message from server
     function onMessage(event) {
-        let jsondata = JSON.parse(event.data);
-        let type = jsondata.type;
-        if (type == 'led') {
-            updateLEDStatus(jsondata);
-        }
-        else if (type == 'button') {
-            updateBtnStatus(jsondata);
-        }
+        robotStatus = JSON.parse(event.data);
     } 
 
     $(document).ready(function() {
@@ -260,8 +261,8 @@
     // direction is one of five, "forward", "backward", "left", "right", "stop"
     function move(direction) {
         let [power, trim] = getPowerAndTrimValues();
-        console.log("power=",power);
-        console.log("trim=",trim);
+        // console.log("power=",power);
+        // console.log("trim=",trim);
         let motor_settings = {
             'type': 'motors',
             'lmotor_power': 0,
@@ -271,24 +272,29 @@
             case "forward":
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
+                console.log('forward');
                 break;
             
             case "backward": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
+                console.log('backward');
                 break; 
             
             case "left": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
+                console.log('left');
                 break; 
 
             case "right": 
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
+                console.log('right');
                 break; 
 
             default:
+                console.log('stop');
                 break;
         }
         websocket.send(JSON.stringify(motor_settings));
@@ -300,21 +306,43 @@
         return [power, trim];
     }
     // toggle the lights on the car 
-    // state is the boolean state of the lights
+    // state is the string state of the lights, either 'on', 'off', or 'toggle'
     function toggleLights(state) {
+        let stateVal = false;
+        switch (state) {
+            case 'on':
+                stateVal = true;
+                break;
+            
+            case 'toggle': 
+
+                break;
+
+            default:
+                break;
+        }
         let light_settings = {
             'type': 'lights', 
-            'state': state
+            'state': stateVal
         }
         websocket.send(JSON.stringify(light_settings));
     }
 
     // toggle the horn on the car 
-    // state is the boolean state of the horn
+    // state is the string state of the horn, either 'on' or 'off'
     function toggleBeep(state) {
+        let stateVal = false;
+        switch (state) {
+            case 'on':
+                stateVal = true;
+                break;
+        
+            default:
+                break;
+        }
         let horn_settings = {
             'type': 'horn', 
-            'state': state
+            'state': stateVal
         }
         websocket.send(JSON.stringify(horn_settings));
     }
