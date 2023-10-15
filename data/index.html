@@ -8,93 +8,113 @@
             font-family: Arial, serif;
         }
 
-        header {
-            padding: 0.1em 1.5em;
-            background: #abcdef;
+        #movementControls {
+            display: block;
+            text-align: center;
         }
 
-        #instructions {
-        
+        #dpad_grid_container {
+            display: inline-block;
         }
 
-        #toggleControls { 
-            display: flex;
-            justify-content: center;
-            
+        #dpad_grid {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            align-items: center;
+            width: 40%;
+
         }
 
-        #joystickContainer {
-            margin: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        input[type="button"] {
-            height: 40px;
-            min-width: 50px;
-            border-radius: 20px;
-            margin: 10px 2px 0;
-            font-size: 15px;
-            color: black;
+        div {
+            margin: 0.5vw;
         }
 
-        #honk {
-            background-color: orange;
+        .none {
+            height: 50px;
+            width: 50px;
+            margin: 0;
         }
 
-        #joystick_svg {
-            width: 200px;
-            height: 200px;
-            border: none;
-            transform-origin: top left;
+        .dpad_button {
+            background-color: green;
+            padding: 0;
         }
 
+        .dpad_image {
+            height: 9vh;
+            width: 9vh;
+            padding: 0;
+        }
+
+        input[type=range] {
+            display: inline-block;
+            width: 40vw;
+            accent-color: green;
+        }
+
+        /* #speed::-moz-range-thumb {  
+            border-radius: 50%;
+            height: 1.5vw;
+            width: 1.5vw;
+        }
+       
+
+        #speed::-moz-range-track {
+            height: 0.5vw;
+        }  */
+
+        input[type=checkbox] {
+            width: 2vw;
+            height: 2vw;
+            accent-color: green;
+        }
+
+        #toggleControls > div {
+            display: inline;
+        }
     </style>
     <script src="jquery_min.js"></script>
 </head>  
 <body>
-    <header>
-        <h1>ESP8266 WiFi robot</h1>
-    </header>
+    <div>
+        <header>
+            <h1>ESP8266 WiFi robot</h1>
+        </header>
+    </div>
     <div id="controls">
-        <div id="joystickContainer">
-            <svg id="joystick_svg" width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="400" height="400" fill="#1E1E1E"/>
-            <g id="joystick">
-            <g clip-path="url(#clip0_0_1)">
-            <rect width="400" height="400" fill="#D9D9D9"/>
-            
-            <g id="actuation_area_group">
-            <circle id="actuation_area" cx="200" cy="200" r="200" fill="#666666"/>
-            </g>
-            
-            <g id="stick_group">
-            <circle id="stick" cx="200" cy="200" r="75" fill="#00FFC2"/>
-            </g>
-            
-            <g id="directional_markers">
-            <path id="left_marker" d="M38 200L75.5 148.038V251.962L38 200Z" fill="#D9D9D9"/>
-            <path id="right_marker" d="M362 200L324.5 251.962V148.038L362 200Z" fill="#D9D9D9"/>
-            <path id="up_marker" d="M200 38L251.962 75.5H148.038L200 38Z" fill="#D9D9D9"/>
-            <path id="down_marker" d="M200 362L148.038 324.5H251.962L200 362Z" fill="#D9D9D9"/>
-            </g>
-            
-            </g>
-            <rect x="0.5" y="0.5" width="399" height="399" stroke="black"/>
-            </g>
-            <defs>
-            <clipPath id="clip0_0_1">
-            <rect width="400" height="400" fill="white"/>
-            </clipPath>
-            </defs>
-            </svg>
-        </div> 
+        <div id="movementControls">
+            <div id="dpad_grid_container">
+                <div id="dpad_grid">
+                    <div class="none"></div>
+                    <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"></button>
+                    <div class="none"></div>
+                    <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"></button>
+                    <div class="none"></div>
+                    <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"></button>
+                    <div class="none"></div>
+                    <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"></button>
+                    <div class="none"></div>
+                </div>
+            </div>
+            <div id="speedControl">
+                <label for="speed" style="margin: 0 1.5vw 0;">Speed adjustment:  </label>
+                <input type="range" id="speed" name="speed" class="range1"></input>
+            </div>
+            <div id="trimControl">
+                <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
+                <input type="range" id="trim" name="trim" class="range1"></input>
+            </div>
+
+        </div>
+        
         <div id="toggleControls">
-            <div>
+            <div id="lightControl">
                 <input type="checkbox" id="lights" name="lights" value="lights">
                 <label for="lights">Lights</label>
-                <input type="button" id="honk" name="honk" value="honk">
-                <label for="honk">Honk</label>
+            </div>
+            <div if="beepControl">
+                <input type="checkbox" id="beep" name="beep" value="beep">
+                <label for="beep">Beep</label>
             </div>
         </div> 
         <div id="instructions">
@@ -110,129 +130,12 @@
 </body>
 <script type="text/javascript">
     $(document).ready(function() {
-        const joystickSvg = $("#joystick_svg");
-        const stickGroup = $("#stick_group");
-        const actuationArea = $("#actuation_area_group");
-        
-        let isDragging = false; 
-        let offsetX, offsetY; 
-        let newX, newY;
-        let stickCenterX, stickCenterY;
-        let translateX, translateY;
-
-        let stickRect = stickGroup.get(0).getBoundingClientRect();
-        const origX = (stickRect.left + stickRect.right) / 2;
-        const origY = (stickRect.top + stickRect.bottom) / 2;
-        // console.log(origX, ", ", origY);
-
-        const actuationAreaCircle = $("#actuation_area");
-        const circleCenterX = parseFloat(actuationAreaCircle.attr("cx"));
-        const circleCenterY = parseFloat(actuationAreaCircle.attr("cy"));
-        console.log(circleCenterX, ", ", circleCenterY); 
-
-        stickGroup.on("mousedown touchstart", function (event) {
-            // if (isTouchEnabled()) {
-            //     event.preventDefault();
-            // }
-            // alert("X");
-            isDragging = true;
-            // offsetX = event.offsetX;
-            // offsetY = event.offsetY;
-            // console.log(offsetX, ", ", offsetY);
         });
-
-        function transformSVGtoDOM(svgX, svgY) {
-            const svgPoint = joystickSvg[0].createSVGPoint(); 
-            svgPoint.x = svgX;
-            svgPoint.y = svgY; 
-            const transformedPoint = svgPoint.matrixTransform(joystickSvg[0].getScreenCTM().inverse());
-            return svgPoint;
-        }
-
-        function transformSVGtoDOM(domX, domY) {
-            const svgMatrix = 
-            const svgPoint = joystickSvg[0].createSVGPoint(); 
-            svgPoint.x = svgX;
-            svgPoint.y = svgY; 
-            const transformedPoint = svgPoint.matrixTransform(joystickSvg[0].getScreenCTM().inverse());
-            return svgPoint;
-        }
-
-        function getScalingFactor
-        
-        joystickSvg.on("mousemove touchmove", function(event) {
-            const sf = 2.14; 
-            const radius = parseFloat(actuationAreaCircle.attr("r"));
-            let svgX = 100;
-            let svgY = 100; 
-            console.log(transformSVGtoDOM(svgX, svgY)); 
-
-            if (isTouchEnabled()) {
-                event.preventDefault();
-            }
-
-            if (isDragging) {
-                stickCenterX = stickGroup.offset().left + stickGroup.width() / 2;
-                stickCenterY = stickGroup.offset().top + stickGroup.height() / 2; 
-
-                let inputX, inputY;
-                if (isTouchEnabled()) {
-                    inputX = event.touches[0].clientX;
-                    inputY = event.touches[0].clientY;
-                }
-                else {
-                    inputX = event.clientX;
-                    inputY = event.clientY;
-                }
-
-                translateX = inputX - origX;
-                translateY = inputY - origY;
-                translateX = translateX * sf;
-                translateY = translateY * sf; 
-
-                distance = Math.sqrt(Math.pow(translateX, 2) + Math.pow(translateY, 2));
-                if (distance <= radius * sf) {
-                    stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-                }
-                
-
-                // p = new DOMPoint(translateX, translateY);
-                // let points = p.matrixTransform(SVGStickMatrix);
-                // console.log(translateX, translateY, points); 
-
-                // console.log(event.clientX, ", ", origX+translateX, ", ", stickCenterX);
-                // stickGroup.attr("transform", `translate(${translateX},${translateY})`);
-                
-            }
-        });
-
-        $(document).on("mouseup touchend", function () {
-            // if (isTouchEnabled()) {
-            //     event.preventDefault();
-            // }
-            isDragging = false;
-            stickGroup.attr("transform", "translate(0,0)");
-        });
-    });
-
-    
-    
 
     function isTouchEnabled() {
         return ('ontouchstart' in window) || 
             (navigator.maxTouchPoints > 0) || 
             (navigator.msMaxTouchPoints > 0);
     }
-
-
-            // function throttle(callback, delay) {
-        //     let lastCall = 0; 
-        //     return function(...args) {
-        //         const now = new Date().getTime(); 
-        //         if (now - lastCall < delay) return;
-        //         lastCall = now;
-        //         callback.apply(this, args);
-        //     };
-        // }
 </script>
 </html>
