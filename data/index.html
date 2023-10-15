@@ -56,13 +56,13 @@
             accent-color: green;
         }
 
-        /* #speed::-moz-range-thumb {  
+        /* #power::-moz-range-thumb {  
             border-radius: 50%;
             height: 1.5vw;
             width: 1.5vw;
         }
        
-        #speed::-moz-range-track {
+        #power::-moz-range-track {
             height: 0.5vw;
         }  */
 
@@ -74,6 +74,18 @@
 
         #toggleControls > div {
             display: inline;
+        }
+        
+        .offbutton {
+            background-color: #ff0000;
+        }
+
+        .onbutton {
+            background-color: #00ff00;
+        }
+
+        .pressedbutton {
+            background-color: #00ffff;
         }
     </style>
     <script src="jquery_min.js"></script>
@@ -119,15 +131,15 @@
                     <div class="dpad_spacer"></div>
                 </div>
             </div>
-            <div id="speedControl">
-                <label for="speed" style="margin: 0 1.5vw 0;">Speed adjustment:  </label>
-                <input type="range" id="speed" name="speed" class="range1" 
+            <div id="powerControl">
+                <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
+                <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput=""
                 ></input>
             </div>
             <div id="trimControl">
                 <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
-                <input type="range" id="trim" name="trim" class="range1"
+                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
                     oninput=""
                 ></input>
             </div>
@@ -143,7 +155,10 @@
             </div>
             <div if="beepControl">
                 <button id="beep" name="beep" value="beep"
-                    oninput=""
+                    onmousedown="toggleBeep(true)"
+                    onmouseup="toggleBeep(false)"
+                    ontouchstart="toggleBeep(true)"
+                    ontouchend="toggleBeep(false)"
                 ><img src="horn.svg" id="beep_icon" alt="Beep"></button>
                 <label for="beep">Beep</label>
             </div>
@@ -152,7 +167,7 @@
             <h2>Instructions</h2>
             <p>Move the joystick with your mouse or finger to move the robot.</p>
             <p>On a desktop browser, the WASD keys can be used to move the robot 
-                and the - and + keys can be used to adjust the speed.</p>
+                and the - and + keys can be used to adjust the power.</p>
             <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p>
             <p>The toggle controls below control the lights and the buzzer horn.</p>    
         </div>
@@ -194,8 +209,24 @@
         }
     } 
 
+    $(document).ready(function() {
+        if (isTouchEnabled()) {
+            for (element of $("input, button")) {
+                element.onmousedown = ""; 
+                element.onmouseup = "";
+            }    
+        }
+        else {
+            for (element of $("input, button")) {
+                element.ontouchstart = ""; 
+                element.ontouchend = "";
+            } 
+        }
+        initWebSocket();
+    });
+
     /*
-    power = speed slider value, from 0 to 255, default 100
+    power = power slider value, from 0 to 255, default 100
     trim = trim slider value, from -1 to 1, default 0
     The power is the maximum power value of either or both motors. 
     The trim is the difference in power between the left and the right motors to adjust for any deviations in direction when the 
@@ -220,27 +251,72 @@
     lmotor_speed = power * (1 + trim)
     rmotor_speed = -power * (1 - trim)
     
-    
+    // angled left and angled right to be continued
     */ 
 
-    $(document).ready(function() {
-
-    });
-
-    function initBody() {
-        if (isTouchEnabled()) {
-            for (element of document.getElementsByTagName("*")) {
-                element.onmousedown = ""; 
-                element.onmouseup = "";
-            }    
+    // control the motors given the power and trim adjustment values.
+    // power is power value from 0 to 255
+    // trim is trim value from -1 to 1
+    // direction is one of five, "forward", "backward", "left", "right", "stop"
+    function move(direction) {
+        let [power, trim] = getPowerAndTrimValues();
+        console.log("power=",power);
+        console.log("trim=",trim);
+        let motor_settings = {
+            'type': 'motors',
+            'lmotor_power': 0,
+            'rmotor_power': 0
         }
-        else {
-            for (element of document.getElementsByTagName("*")) {
-                element.ontouchstart = ""; 
-                element.ontouchend = "";
-            } 
+        switch (direction) {
+            case "forward":
+                motor_settings.lmotor_power = power * (1 + trim); 
+                motor_settings.rmotor_power = power * (1 - trim);
+                break;
+            
+            case "backward": 
+                motor_settings.lmotor_power = -power * (1 + trim); 
+                motor_settings.rmotor_power = -power * (1 - trim);
+                break; 
+            
+            case "left": 
+                motor_settings.lmotor_power = -power * (1 + trim); 
+                motor_settings.rmotor_power = power * (1 - trim);
+                break; 
+
+            case "right": 
+                motor_settings.lmotor_power = power * (1 + trim); 
+                motor_settings.rmotor_power = -power * (1 - trim);
+                break; 
+
+            default:
+                break;
         }
-        initWebSocket();
+        websocket.send(JSON.stringify(motor_settings));
+    }
+
+    function getPowerAndTrimValues() {
+        let power = $("#power").val(); 
+        let trim = $("#trim").val(); 
+        return [power, trim];
+    }
+    // toggle the lights on the car 
+    // state is the boolean state of the lights
+    function toggleLights(state) {
+        let light_settings = {
+            'type': 'lights', 
+            'state': state
+        }
+        websocket.send(JSON.stringify(light_settings));
+    }
+
+    // toggle the horn on the car 
+    // state is the boolean state of the horn
+    function toggleBeep(state) {
+        let horn_settings = {
+            'type': 'horn', 
+            'state': state
+        }
+        websocket.send(JSON.stringify(horn_settings));
     }
 
     function isTouchEnabled() {
