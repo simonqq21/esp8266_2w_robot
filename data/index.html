@@ -62,7 +62,6 @@
             width: 1.5vw;
         }
        
-
         #speed::-moz-range-track {
             height: 0.5vw;
         }  */
@@ -164,9 +163,62 @@
     let gateway = `ws://${window.location.hostname}/ws`;
     let websocket; 
 
+    function initWebSocket() {
+        // alert('Websocket initializing');
+        websocket = new WebSocket(gateway);
+        websocket.onopen = onOpen; 
+        websocket.onclose = onClose; 
+        websocket.onmessage = onMessage;
+    }
+    // runs when websocket opens
+    function onOpen(event) {
+        // alert('Connection opened');
+        websocket.send("new");
+    }
+
+    // runs when websocket closes
+    function onClose(event) {
+        // alert('Connection closed');
+        setTimeout(initWebSocket, 2000); // restart websocket
+    }
+
+    // runs when websocket receives message from server
+    function onMessage(event) {
+        let jsondata = JSON.parse(event.data);
+        let type = jsondata.type;
+        if (type == 'led') {
+            updateLEDStatus(jsondata);
+        }
+        else if (type == 'button') {
+            updateBtnStatus(jsondata);
+        }
+    } 
+
+        /*
+    speed slider value = speed, from 0 to 255 
+    trim slider value = trim, from -127 to 127 
+    
+    */ 
+
     $(document).ready(function() {
 
     });
+
+    function initBody() {
+        if (isTouchEnabled()) {
+            for (element of document.getElementsByTagName("*")) {
+                element.onmousedown = ""; 
+                element.onmouseup = "";
+            }    
+        }
+        else {
+            for (element of document.getElementsByTagName("*")) {
+                element.ontouchstart = ""; 
+                element.ontouchend = "";
+            } 
+        }
+        initWebSocket();
+    }
 
     function isTouchEnabled() {
         return ('ontouchstart' in window) || 
