@@ -102,7 +102,7 @@
                 <div id="dpad_grid">
                     <div class="dpad_spacer"></div>
                     <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
-                        onmousedown="move('forward');"
+                        onmousedown="move('forward'); "
                         onmouseup="move('');"
                         ontouchstart="move('forward');"
                         ontouchend="move('');"
@@ -193,6 +193,7 @@
         websocket.onclose = onClose; 
         websocket.onmessage = onMessage;
     }
+
     // runs when websocket opens
     function onOpen(event) {
         // alert('Connection opened');
@@ -210,7 +211,28 @@
         robotStatus = JSON.parse(event.data);
     } 
 
+    // update the status indicators on the webpage
+    function updateStatusIndicators() {
+        let lightsButton = $("#lights");
+        let beepButton = $("#beep");
+        // update beep button status
+        if (robotStatus.beepState) {
+            beepButton.addClass("onbutton");
+        }
+        else {
+            beepButton.addClass("offbutton");
+        }
+        // update lights button status
+        if (robotStatus.lightState) {
+            lightsButton.addClass("onbutton");
+        }
+        else {
+            lightsButton.addClass("offbutton");
+        }
+    }
+
     $(document).ready(function() {
+        updateStatusIndicators();
         if (isTouchEnabled()) {
             for (element of $("input, button")) {
                 element.onmousedown = ""; 
@@ -268,32 +290,38 @@
             'lmotor_power': 0,
             'rmotor_power': 0
         }
+        
         switch (direction) {
             case "forward":
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
+                $('#forward').addClass('pressedbutton'); 
                 console.log('forward');
                 break;
             
             case "backward": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
+                $('#backward').addClass('pressedbutton'); 
                 console.log('backward');
                 break; 
             
             case "left": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
+                $('#left').addClass('pressedbutton'); 
                 console.log('left');
                 break; 
 
             case "right": 
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
+                $('#right').addClass('pressedbutton'); 
                 console.log('right');
                 break; 
 
             default:
+                $('.dpad_button').removeClass('pressedbutton'); 
                 console.log('stop');
                 break;
         }
@@ -315,7 +343,7 @@
                 break;
             
             case 'toggle': 
-
+                stateVal = !robotStatus.lightState;
                 break;
 
             default:
@@ -326,6 +354,7 @@
             'state': stateVal
         }
         websocket.send(JSON.stringify(light_settings));
+        updateStatusIndicators();
     }
 
     // toggle the horn on the car 
@@ -345,6 +374,7 @@
             'state': stateVal
         }
         websocket.send(JSON.stringify(horn_settings));
+        updateStatusIndicators();
     }
 
     function isTouchEnabled() {
