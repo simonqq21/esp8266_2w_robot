@@ -194,9 +194,32 @@
         }
     } 
 
-        /*
-    speed slider value = speed, from 0 to 255 
-    trim slider value = trim, from -127 to 127 
+    /*
+    power = speed slider value, from 0 to 255, default 100
+    trim = trim slider value, from -1 to 1, default 0
+    The power is the maximum power value of either or both motors. 
+    The trim is the difference in power between the left and the right motors to adjust for any deviations in direction when the 
+    robot is moving straight.
+
+    The two wheeled robot has two motors, the left motor and the right motor. 
+    The two motors may have a different speed even with the same power values. 
+
+    when forward is pressed, both motors move forward at ideally the same speed.
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when backward is pressed, both motors move backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+
+    when left is pressed, the right motor moves forward while the left motor moves backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when right is pressed, the left motor moves forward while the right motor moves backward at ideally the same speed. 
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+    
     
     */ 
 
