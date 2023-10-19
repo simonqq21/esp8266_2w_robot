@@ -25,7 +25,7 @@ IPAddress gateway(192,168,5,1);
 IPAddress subnet(255,255,255,0);
 //IPAddress primaryDNS(8,8,8,8);
 //IPAddress secondaryDNS(8,8,4,4);
-#define APMODE true
+#define APMODE false
 
 // status variables 
 int lmotor_power = 0;
@@ -70,21 +70,21 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     else 
       Serial.println("deserializeJson success");
       
-    String commandType = inputDoc["type"]
+    String commandType = inputDoc["type"];
     //    send status JSON
-    if (strcmp(commandType, "status") == 0) {
+    if (commandType == "status") {
       sendStatusUpdate();
     }
     //  update motor power values
-    else if (strcmp(commandType, "motors") == 0) {
+    else if (commandType == "motors") {
       controlMotors();
     }
     //    update headlight values
-    else if (strcmp(commandType, "lights") == 0) {
+    else if (commandType == "lights") {
       controlLights();
     }
     //    update beeper values
-    else if (strcmp(commandType, "beep") == 0) {
+    else if (commandType == "beep") {
       controlBeep();
     }
   }
@@ -94,7 +94,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
    outputDoc.clear();
    outputDoc["type"] = "status";
    outputDoc["lightState"] = lights_state;
-   outputDoc["beepState"] = beep_state;
+   outputDoc["beepState"] = horn_state;
    outputDoc["lmotor_power"] = lmotor_power;
    outputDoc["rmotor_power"] = rmotor_power;
    serializeJson(outputDoc, strData);
@@ -127,16 +127,16 @@ void initWebSocket() {
 }
 
 void controlMotors() {
-  lmotor_power = inputDoc["lmotor_power"]
-  rmotor_power = inputDoc["rmotor_power"]
+  lmotor_power = inputDoc["lmotor_power"];
+  rmotor_power = inputDoc["rmotor_power"];
   analogWrite(lmotor_pin, lmotor_power);
   analogWrite(rmotor_pin, rmotor_power);
   sendStatusUpdate();
 } 
 
 void disconnectBrake() {
-  lmotor_power = 0
-  rmotor_power = 0
+  lmotor_power = 0;
+  rmotor_power = 0;
   analogWrite(lmotor_pin, lmotor_power);
   analogWrite(rmotor_pin, rmotor_power);
 }
@@ -152,6 +152,7 @@ void controlBeep() {
   digitalWrite(horn_pin, horn_state);
   sendStatusUpdate();
 }
+
 
 void setup() {
   Serial.begin(115200); 
@@ -182,7 +183,7 @@ void setup() {
     if (!WiFi.config(local_IP, gateway, subnet)) {
       Serial.println("Station failed to configure.");
     }
-    
+      
     WiFi.begin(LOCAL_SSID, LOCAL_PASS); 
     while (WiFi.status() != WL_CONNECTED) {
       delay(500); 
