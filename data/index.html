@@ -180,6 +180,7 @@
 
     // status update JSON format
     let robotStatus = {   
+        'type': 'status',
         'lightState': false,
         'beepState': false,
         'lmotor_power': 0,
@@ -197,7 +198,9 @@
     // runs when websocket opens
     function onOpen(event) {
         // alert('Connection opened');
-        websocket.send("new");
+        // JSON to request for a status update
+        jsondata = {'command': 'update'}
+        websocket.send(jsondata);
     }
 
     // runs when websocket closes
@@ -285,6 +288,7 @@
         let [power, trim] = getPowerAndTrimValues();
         // console.log("power=",power);
         // console.log("trim=",trim);
+        // motor power values JSON
         let motor_settings = {
             'type': 'motors',
             'lmotor_power': 0,
@@ -351,7 +355,7 @@
         }
         let light_settings = {
             'type': 'lights', 
-            'state': stateVal
+            'lights_state': stateVal
         }
         websocket.send(JSON.stringify(light_settings));
         updateStatusIndicators();
@@ -370,8 +374,8 @@
                 break;
         }
         let horn_settings = {
-            'type': 'horn', 
-            'state': stateVal
+            'type': 'beep', 
+            'horn_state': stateVal
         }
         websocket.send(JSON.stringify(horn_settings));
         updateStatusIndicators();

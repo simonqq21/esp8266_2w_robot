@@ -28,8 +28,8 @@ IPAddress subnet(255,255,255,0);
 #define APMODE true
 
 // status variables 
-int lmotor_speed = 0;
-int rmotor_speed = 0; 
+int lmotor_power = 0;
+int rmotor_power = 0; 
 boolean lights_state = false; 
 boolean horn_state = false; 
 uint32_t lastTimeUpdated = 0;
@@ -55,35 +55,51 @@ void printWiFi() {
   Serial.println(" dBm");
 }
 
+// function that receives all JSON data from the controlling device
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   AwsFrameInfo *info = (AwsFrameInfo*)arg;
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
     data[len] = 0;
-    if (strcmp("new", (char*)data) == 0) {
-      for (int i=0;i<LEDCOUNT;i++) {
-        globalLEDIndex = i;
-        sendLEDJSON();
-      }
-      for (int i=0;i<BTNCOUNT;i++) {
-        globalBtnIndex = i; 
-        sendBtnJSON();
-      }
+    
+    //    deserialize the JSON into a JSON object
+    DeserializationError error = deserializeJson(inputDoc, (char*)data); 
+    if (error) {
+      Serial.print("deserializeJson failed: ");
+      Serial.println(error.f_str());
     }
-    else {
-      DeserializationError error = deserializeJson(inputDoc, (char*)data); 
-      if (error) {
-        Serial.print("deserializeJson failed: ");
-        Serial.println(error.f_str());
-      }
-      else 
-        Serial.println("deserializeJson success");
-      strcpy(type, inputDoc["type"]);
-      if (strcmp(type, TYPELED) == 0) {   
-        controlLED();
-      }
+    else 
+      Serial.println("deserializeJson success");
+      
+    String commandType = inputDoc["type"]
+    //    send status JSON
+    if (strcmp(commandType, "status") == 0) {
+      sendStatusUpdate();
+    }
+    //  update motor power values
+    else if (strcmp(commandType, "motors") == 0) {
+      controlMotors();
+    }
+    //    update headlight values
+    else if (strcmp(commandType, "lights") == 0) {
+      controlLights();
+    }
+    //    update beeper values
+    else if (strcmp(commandType, "beep") == 0) {
+      controlBeep();
     }
   }
 }
+
+ void sendStatusUpdate() {
+   outputDoc.clear();
+   outputDoc["type"] = "status";
+   outputDoc["lightState"] = lights_state;
+   outputDoc["beepState"] = beep_state;
+   outputDoc["lmotor_power"] = lmotor_power;
+   outputDoc["rmotor_power"] = rmotor_power;
+   serializeJson(outputDoc, strData);
+   ws.textAll(strData);
+ }
 
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len) {
@@ -93,6 +109,8 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
         break;
       case WS_EVT_DISCONNECT:
         Serial.printf("WebSocket client #%u disconnected\n", client->id());
+        // stop robot motors upon disconnection
+        disconnectBrake();
         break;
       case WS_EVT_DATA:
         handleWebSocketMessage(arg, data, len);
@@ -106,6 +124,33 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
 void initWebSocket() {
   ws.onEvent(onEvent);
   server.addHandler(&ws);
+}
+
+void controlMotors() {
+  lmotor_power = inputDoc["lmotor_power"]
+  rmotor_power = inputDoc["rmotor_power"]
+  analogWrite(lmotor_pin, lmotor_power);
+  analogWrite(rmotor_pin, rmotor_power);
+  sendStatusUpdate();
+} 
+
+void disconnectBrake() {
+  lmotor_power = 0
+  rmotor_power = 0
+  analogWrite(lmotor_pin, lmotor_power);
+  analogWrite(rmotor_pin, rmotor_power);
+}
+
+void controlLights() {
+  lights_state = inputDoc["lights_state"];
+  digitalWrite(lights_pin, lights_state); 
+  sendStatusUpdate();
+}
+
+void controlBeep() {
+  horn_state = inputDoc["horn_state"];
+  digitalWrite(horn_pin, horn_state);
+  sendStatusUpdate();
 }
 
 void setup() {
