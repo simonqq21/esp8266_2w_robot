@@ -211,6 +211,7 @@
 
     // runs when websocket receives message from server
     function onMessage(event) {
+        console.log(event.data);
         robotStatus = JSON.parse(event.data);
     } 
 

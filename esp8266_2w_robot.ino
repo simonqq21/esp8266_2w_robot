@@ -15,9 +15,9 @@
 // async web server
 AsyncWebServer server(80); 
 AsyncWebSocket ws("/ws"); 
-StaticJsonDocument<70> inputDoc;
-StaticJsonDocument<70> outputDoc;
-char strData[70];
+StaticJsonDocument<140> inputDoc;
+StaticJsonDocument<140> outputDoc;
+char strData[140];
 
 //static IP address configuration 
 IPAddress local_IP(192,168,5,75);
@@ -198,6 +198,9 @@ void setup() {
   // route for root web page 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/index.html", String(), false);});
+    // route for root web page 
+  server.on("/jquery_min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/jquery_min.js", String(), false);});
   server.begin();
 }
 
