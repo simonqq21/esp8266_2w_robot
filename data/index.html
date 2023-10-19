@@ -134,14 +134,16 @@
             <div id="powerControl">
                 <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
-                    oninput=""
+                    oninput="getPowerAndTrimValues()"
                 ></input>
+                <p id="power_display">0</p>
             </div>
             <div id="trimControl">
                 <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
-                    oninput=""
+                    oninput="getPowerAndTrimValues()"
                 ></input>
+                <p id="trim_display">0</p>
             </div>
 
         </div>
@@ -155,10 +157,10 @@
             </div>
             <div if="beepControl">
                 <button id="beep" name="beep" value="beep"
-                    onmousedown="toggleBeep(true)"
-                    onmouseup="toggleBeep(false)"
-                    ontouchstart="toggleBeep(true)"
-                    ontouchend="toggleBeep(false)"
+                    onmousedown="toggleBeep('on')"
+                    onmouseup="toggleBeep('off')"
+                    ontouchstart="toggleBeep('on')"
+                    ontouchend="toggleBeep('off')"
                 ><img src="horn.svg" id="beep_icon" alt="Beep"></button>
                 <label for="beep">Beep</label>
             </div>
@@ -199,9 +201,16 @@
     function onOpen(event) {
         // alert('Connection opened');
         // JSON to request for a status update
+        requestStatus();
+    }
+
+    function requestStatus() {
         jsondata = {'command': 'update'}
         websocket.send(jsondata);
+        updateStatusIndicators();
     }
+
+    setInterval(requestStatus, 200); 
 
     // runs when websocket closes
     function onClose(event) {
@@ -222,20 +231,25 @@
         // update beep button status
         if (robotStatus.beepState) {
             beepButton.addClass("onbutton");
+            beepButton.removeClass("offbutton");
         }
         else {
             beepButton.addClass("offbutton");
+            beepButton.removeClass("onbutton");
         }
         // update lights button status
         if (robotStatus.lightState) {
             lightsButton.addClass("onbutton");
+            lightsButton.removeClass("offbutton");
         }
         else {
             lightsButton.addClass("offbutton");
+            lightsButton.removeClass("onbutton");
         }
     }
 
     $(document).ready(function() {
+        getPowerAndTrimValues();
         updateStatusIndicators();
         if (isTouchEnabled()) {
             for (element of $("input, button")) {
@@ -298,6 +312,7 @@
         
         switch (direction) {
             case "forward":
+                console.log("trim = ", trim);
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
                 $('#forward').addClass('pressedbutton'); 
@@ -330,14 +345,23 @@
                 console.log('stop');
                 break;
         }
+        console.log("motor json = ", JSON.stringify(motor_settings));
         websocket.send(JSON.stringify(motor_settings));
     }
 
     function getPowerAndTrimValues() {
         let power = $("#power").val(); 
         let trim = $("#trim").val(); 
+        power = parseInt(power);
+        trim = parseFloat(trim);
+        let powerDisplay = $("#power_display");
+        let trimDisplay = $("#trim_display");
+        // update power and trim display
+        $("#power_display").text(power); 
+        $("#trim_display").text(trim);
         return [power, trim];
     }
+
     // toggle the lights on the car 
     // state is the string state of the lights, either 'on', 'off', or 'toggle'
     function toggleLights(state) {

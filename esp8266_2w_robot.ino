@@ -6,7 +6,7 @@
 
 // motor pins 
 #define lmotor_pin 12
-#define rmotor_pin 13
+#define rmotor_pin 2
 // light pin
 #define lights_pin 14
 // horn pin 
@@ -63,6 +63,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     
     //    deserialize the JSON into a JSON object
     DeserializationError error = deserializeJson(inputDoc, (char*)data); 
+    Serial.println((char*)data);
     if (error) {
       Serial.print("deserializeJson failed: ");
       Serial.println(error.f_str());
@@ -129,6 +130,10 @@ void initWebSocket() {
 void controlMotors() {
   lmotor_power = inputDoc["lmotor_power"];
   rmotor_power = inputDoc["rmotor_power"];
+  Serial.print("left motor = ");
+  Serial.println(lmotor_power);
+  Serial.print("right motor = ");
+  Serial.println(rmotor_power);
   analogWrite(lmotor_pin, lmotor_power);
   analogWrite(rmotor_pin, rmotor_power);
   sendStatusUpdate();
@@ -160,10 +165,13 @@ void setup() {
   if (!LittleFS.begin()) {
     Serial.println("An error occured while mounting LittleFS.");
   }
-  pinMode(lmotor_pin, OUTPUT); 
+//  pinMode(lmotor_pin, OUTPUT); 
   pinMode(rmotor_pin, OUTPUT);
   pinMode(lights_pin, OUTPUT);
   pinMode(horn_pin, OUTPUT);
+
+
+  
   // wifi 
   //  if ESP will start its own hotspot
   if (APMODE) {
@@ -198,13 +206,27 @@ void setup() {
   // route for root web page 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/index.html", String(), false);});
-    // route for root web page 
+    // route for other files
   server.on("/jquery_min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(LittleFS, "/jquery_min.js", String(), false);});
+    request->send(LittleFS, "/jquery_min.js", "text/javascript", false);});
+
+    server.on("/forward.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/forward.svg", "image/svg+xml", false);});
+    server.on("/backward.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/backward.svg", "image/svg+xml", false);});
+    server.on("/left.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/left.svg", "image/svg+xml", false);});
+    server.on("/right.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/right.svg", "image/svg+xml", false);});
+    server.on("/lights.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/lights.svg", "image/svg+xml", false);});
+    server.on("/horn.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/horn.svg", "image/svg+xml", false);});
   server.begin();
 }
 
 void loop() {
   ws.cleanupClients(); 
-
+//  analogWrite(lmotor_pin, 50);
+//  analogWrite(rmotor_pin, 50);
 }
