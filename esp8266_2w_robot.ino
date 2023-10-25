@@ -5,12 +5,16 @@
 #include <LittleFS.h> 
 
 // motor pins 
-#define lmotor_pin 12
-#define rmotor_pin 2
+#define LMOTOR_SPEED_PIN 4
+#define RMOTOR_SPEED_PIN 5
+#define LMOTOR_DIR_PIN1 12
+#define LMOTOR_DIR_PIN2 13
+#define RMOTOR_DIR_PIN1 14
+#define RMOTOR_DIR_PIN2 15
 // light pin
-#define lights_pin 14
+#define LIGHTS_PIN 0
 // horn pin 
-#define horn_pin 15 
+#define HORN_PIN 1
 
 // async web server
 AsyncWebServer server(80); 
@@ -28,10 +32,13 @@ IPAddress subnet(255,255,255,0);
 #define APMODE false
 
 // status variables 
+int raw_lmotor, raw_rmotor;
 int lmotor_power = 0;
 int rmotor_power = 0; 
-boolean lights_state = false; 
-boolean horn_state = false; 
+bool lmotor_dir = false; // true for forward rotation, false for backward rotation 
+bool rmotor_dir = false;
+bool lights_state = false; 
+bool horn_state = false; 
 uint32_t lastTimeUpdated = 0;
 const int debounceDelay = 10; 
 
@@ -128,33 +135,43 @@ void initWebSocket() {
 }
 
 void controlMotors() {
-  lmotor_power = inputDoc["lmotor_power"];
-  rmotor_power = inputDoc["rmotor_power"];
+  raw_lmotor = inputDoc["lmotor_power"]; 
+  raw_rmotor = inputDoc["rmotor_power"];
+  lmotor_power = abs(raw_lmotor);
+  rmotor_power = abs(raw_rmotor); 
+  lmotor_dir = (raw_lmotor > 0) ? true: false; 
+  rmotor_dir = (raw_rmotor > 0) ? true: false;
   Serial.print("left motor = ");
   Serial.println(lmotor_power);
   Serial.print("right motor = ");
   Serial.println(rmotor_power);
-  analogWrite(lmotor_pin, lmotor_power);
-  analogWrite(rmotor_pin, rmotor_power);
+  digitalWrite(LMOTOR_DIR_PIN1, lmotor_dir);
+  digitalWrite(LMOTOR_DIR_PIN2, !lmotor_dir);
+  digitalWrite(RMOTOR_DIR_PIN1, rmotor_dir);
+  digitalWrite(RMOTOR_DIR_PIN2, !rmotor_dir);
+  analogWrite(LMOTOR_SPEED_PIN, lmotor_power);
+  analogWrite(RMOTOR_SPEED_PIN, rmotor_power);
   sendStatusUpdate();
 } 
 
 void disconnectBrake() {
-  lmotor_power = 0;
-  rmotor_power = 0;
-  analogWrite(lmotor_pin, lmotor_power);
-  analogWrite(rmotor_pin, rmotor_power);
+  digitalWrite(LMOTOR_DIR_PIN1, false);
+  digitalWrite(LMOTOR_DIR_PIN2, false);
+  digitalWrite(RMOTOR_DIR_PIN1, false);
+  digitalWrite(RMOTOR_DIR_PIN2, false);
+  analogWrite(LMOTOR_SPEED_PIN, 0);
+  analogWrite(RMOTOR_SPEED_PIN, 0);
 }
 
 void controlLights() {
   lights_state = inputDoc["lights_state"];
-  digitalWrite(lights_pin, lights_state); 
+  digitalWrite(LIGHTS_PIN, lights_state); 
   sendStatusUpdate();
 }
 
 void controlBeep() {
   horn_state = inputDoc["horn_state"];
-  digitalWrite(horn_pin, horn_state);
+  digitalWrite(HORN_PIN, horn_state);
   sendStatusUpdate();
 }
 
@@ -165,12 +182,17 @@ void setup() {
   if (!LittleFS.begin()) {
     Serial.println("An error occured while mounting LittleFS.");
   }
-//  pinMode(lmotor_pin, OUTPUT); 
-  pinMode(rmotor_pin, OUTPUT);
-  pinMode(lights_pin, OUTPUT);
-  pinMode(horn_pin, OUTPUT);
 
-
+  // motor controller output pins
+  pinMode(LMOTOR_DIR_PIN1, OUTPUT); 
+  pinMode(LMOTOR_DIR_PIN2, OUTPUT); 
+  pinMode(RMOTOR_DIR_PIN1, OUTPUT); 
+  pinMode(RMOTOR_DIR_PIN2, OUTPUT); 
+  pinMode(LMOTOR_SPEED_PIN, OUTPUT);
+  pinMode(RMOTOR_SPEED_PIN, OUTPUT);
+  // lights and horn pin
+  pinMode(LIGHTS_PIN, OUTPUT);
+  pinMode(HORN_PIN, OUTPUT);
   
   // wifi 
   //  if ESP will start its own hotspot
@@ -223,10 +245,13 @@ void setup() {
     server.on("/horn.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/horn.svg", "image/svg+xml", false);});
   server.begin();
+  
+  disconnectBrake();
+  delay(1000);
 }
 
 void loop() {
   ws.cleanupClients(); 
-//  analogWrite(lmotor_pin, 50);
-//  analogWrite(rmotor_pin, 50);
+//  analogWrite(LMOTOR_SPEED_PIN, 50);
+//  analogWrite(RMOTOR_SPEED_PIN, 50);
 }
