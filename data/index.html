@@ -90,7 +90,7 @@
     </style>
     <script src="jquery_min.js"></script>
 </head>  
-<body>
+<body onkeydown="keydownHandler(event);" onkeyup="keyupHandler(event);">
     <div>
         <header>
             <h1>ESP8266 WiFi robot</h1>
@@ -134,14 +134,14 @@
             <div id="powerControl">
                 <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
-                    oninput="getPowerAndTrimValues()"
+                    oninput="getPowerValue()"
                 ></input>
                 <p id="power_display">0</p>
             </div>
             <div id="trimControl">
                 <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
-                    oninput="getPowerAndTrimValues()"
+                    oninput="getTrimValue()"
                 ></input>
                 <p id="trim_display">0</p>
             </div>
@@ -249,7 +249,8 @@
     }
 
     $(document).ready(function() {
-        getPowerAndTrimValues();
+        getPowerValue(); 
+        getTrimValue();
         updateStatusIndicators();
         if (isTouchEnabled()) {
             for (element of $("input, button")) {
@@ -300,7 +301,8 @@
     // trim is trim value from -1 to 1
     // direction is one of five, "forward", "backward", "left", "right", "stop"
     function move(direction) {
-        let [power, trim] = getPowerAndTrimValues();
+        let power = getPowerValue();
+        let trim = getTrimValue();
         // console.log("power=",power);
         // console.log("trim=",trim);
         // motor power values JSON
@@ -349,17 +351,129 @@
         websocket.send(JSON.stringify(motor_settings));
     }
 
-    function getPowerAndTrimValues() {
-        let power = $("#power").val(); 
-        let trim = $("#trim").val(); 
+    function changePower(deltaPower) {
+        power = getPowerValue(); 
+        power += deltaPower; 
+        power = Math.min(power, 255); 
+        power = Math.max(power, 0);
+        $("#power").val(power); 
+        // update display
+        $("#power_display").text($("#power").val()); 
+        console.log('power=', power);
+    }
+
+    function changeTrim(deltaTrim) { 
+        trim = getTrimValue();
+        trim += deltaTrim; 
+        trim = Math.min(trim, 1); 
+        trim = Math.max(trim, -1);
+        $("#trim").val(trim); 
+        // update display
+        $("#trim_display").text($("#trim").val());  
+        console.log("trim=", trim);
+    }
+
+    function getPowerValue() {
+        let power = $("#power").val();  
         power = parseInt(power);
-        trim = parseFloat(trim);
         let powerDisplay = $("#power_display");
-        let trimDisplay = $("#trim_display");
-        // update power and trim display
+        // update power display
         $("#power_display").text(power); 
+        return power;
+    }
+
+    function getTrimValue() {
+        let trim = $("#trim").val(); 
+        trim = parseFloat(trim);
+        let trimDisplay = $("#trim_display");
+        // update trim display
         $("#trim_display").text(trim);
-        return [power, trim];
+        return trim;
+    }
+
+    function keyupHandler(event) {
+        let key = event.key;  
+        switch(key) {
+            case 'h': 
+            case 'H': 
+                toggleBeep('off');
+                break;
+            // stop
+            case 'w':
+            case 'W':
+            case 'a':
+            case 'A':
+            case 's':
+            case 'S':
+            case 'd':
+            case 'D':
+                move('');
+                break;
+        }
+    }
+
+    function keydownHandler(event) {
+        let key = event.key; 
+        switch (key) {
+            // forward
+            case 'w':
+            case 'W':
+                console.log('forward');
+                move('forward');
+                break;
+            // left 
+            case 'a':
+            case 'A':
+                console.log('left');
+                move('left');
+                break;
+            // reverse 
+            case 's':
+            case 'S':
+                console.log('backward');
+                move('backward');
+                break;
+            // right
+            case 'd':
+            case 'D':
+                console.log('right');
+                move('right');
+                break;
+            // decrease power 
+            case '-': 
+                console.log('power -'); 
+                changePower(-5);
+                break;
+            // increase power 
+            case '=': 
+                console.log('power +'); 
+                changePower(5);
+                break;
+            // decrease trim 
+            case '[': 
+                console.log('trim -'); 
+                changeTrim(-0.05);
+                break;
+            // increase trim 
+            case ']': 
+                console.log('trim +'); 
+                changeTrim(0.05);
+                break;
+            // toggle lights 
+            case 'l': 
+            case 'L': 
+                console.log('lights toggle'); 
+                toggleLights('toggle');
+                break;
+            // sound horn 
+            case 'h': 
+            case 'H': 
+                console.log('horn press'); 
+                toggleBeep('on');
+                break;
+            default:
+                break;
+        }
     }
 
     // toggle the lights on the car 
