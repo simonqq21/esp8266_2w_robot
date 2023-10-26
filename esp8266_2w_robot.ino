@@ -137,32 +137,28 @@ void initWebSocket() {
 void controlMotors() {
   raw_lmotor = inputDoc["lmotor_power"]; 
   raw_rmotor = inputDoc["rmotor_power"];
-  lmotor_power = abs(raw_lmotor);
-  rmotor_power = abs(raw_rmotor); 
-  lmotor_dir = (raw_lmotor > 0) ? true: false; 
-  rmotor_dir = (raw_rmotor > 0) ? true: false;
+
+  // if emergency brake
+  if (raw_lmotor < -255 && raw_rmotor < -255) 
+    disconnectBrake();
+  // else if nominal running state
+  else {
+    lmotor_power = abs(raw_lmotor);
+    rmotor_power = abs(raw_rmotor); 
+    lmotor_dir = (raw_lmotor > 0) ? true: false; 
+    rmotor_dir = (raw_rmotor > 0) ? true: false;
+    digitalWrite(LMOTOR_DIR_PIN1, lmotor_dir);
+    digitalWrite(LMOTOR_DIR_PIN2, !lmotor_dir);
+    digitalWrite(RMOTOR_DIR_PIN1, rmotor_dir);
+    digitalWrite(RMOTOR_DIR_PIN2, !rmotor_dir);
+    analogWrite(LMOTOR_SPEED_PIN, lmotor_power);
+    analogWrite(RMOTOR_SPEED_PIN, rmotor_power);
+  }
   Serial.print("left motor = ");
   Serial.println(lmotor_power);
   Serial.print("right motor = ");
   Serial.println(rmotor_power); 
-  if (lmotor_power <= 0) {
-    digitalWrite(LMOTOR_DIR_PIN1, false);
-    digitalWrite(LMOTOR_DIR_PIN2, false);
-  } 
-  else {
-    digitalWrite(LMOTOR_DIR_PIN1, lmotor_dir);
-    digitalWrite(LMOTOR_DIR_PIN2, !lmotor_dir);
-  }
-  if (rmotor_power <= 0) {
-    digitalWrite(RMOTOR_DIR_PIN1, false);
-    digitalWrite(RMOTOR_DIR_PIN2, false);
-  }
-  else {
-    digitalWrite(RMOTOR_DIR_PIN1, rmotor_dir);
-    digitalWrite(RMOTOR_DIR_PIN2, !rmotor_dir);
-  }
-  analogWrite(LMOTOR_SPEED_PIN, lmotor_power);
-  analogWrite(RMOTOR_SPEED_PIN, rmotor_power);
+  // send status update
   sendStatusUpdate();
 } 
 
@@ -171,8 +167,8 @@ void disconnectBrake() {
   digitalWrite(LMOTOR_DIR_PIN2, false);
   digitalWrite(RMOTOR_DIR_PIN1, false);
   digitalWrite(RMOTOR_DIR_PIN2, false);
-  analogWrite(LMOTOR_SPEED_PIN, 0);
-  analogWrite(RMOTOR_SPEED_PIN, 0);
+  digitalWrite(LMOTOR_SPEED_PIN, false);
+  digitalWrite(RMOTOR_SPEED_PIN, false);
 }
 
 void controlLights() {
@@ -186,7 +182,6 @@ void controlBeep() {
   digitalWrite(HORN_PIN, horn_state);
   sendStatusUpdate();
 }
-
 
 void setup() {
   Serial.begin(115200); 
@@ -243,7 +238,6 @@ void setup() {
     // route for other files
   server.on("/jquery_min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/jquery_min.js", "text/javascript", false);});
-
     server.on("/forward.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/forward.svg", "image/svg+xml", false);});
     server.on("/backward.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -252,6 +246,8 @@ void setup() {
     request->send(LittleFS, "/left.svg", "image/svg+xml", false);});
     server.on("/right.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/right.svg", "image/svg+xml", false);});
+    server.on("/brake.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/brake.svg", "image/svg+xml", false);});
     server.on("/lights.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/lights.svg", "image/svg+xml", false);});
     server.on("/horn.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -264,6 +260,4 @@ void setup() {
 
 void loop() {
   ws.cleanupClients(); 
-//  analogWrite(LMOTOR_SPEED_PIN, 50);
-//  analogWrite(RMOTOR_SPEED_PIN, 50);
 }

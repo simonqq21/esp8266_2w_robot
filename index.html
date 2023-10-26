@@ -46,17 +46,6 @@
             padding: 0;
         }
 
-        .toggle_button {
-            height: 5vw;
-            width: 5vw;
-            padding: 0.5vw;
-        }
-
-        .toggle_button_image {
-            height: 4vw;
-            width: 4vw;
-        }
-
         input[type=range] {
             display: inline-block;
             width: 40vw;
@@ -77,6 +66,17 @@
             display: inline;
         }
         
+        .toggle_button {
+            height: 5vw;
+            width: 5vw;
+            padding: 0.5vw;
+        }
+
+        .toggle_button_image {
+            height: 4vw;
+            width: 4vw;
+        }
+
         .offbutton {
             background-color: #ff0000;
         }
@@ -273,9 +273,46 @@
         }
         initWebSocket();
     });
+
+    /*
+    power = power slider value, from 0 to 255, default 100
+    trim = trim slider value, from -1 to 1, default 0
+    The power is the maximum power value of either or both motors. 
+    The trim is the difference in power between the left and the right motors to adjust for any deviations in direction when the 
+    robot is moving straight.
+
+    The two wheeled robot has two motors, the left motor and the right motor. 
+    The two motors may have a different speed even with the same power values. 
+
+    when forward is pressed, both motors move forward at ideally the same speed.
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when backward is pressed, both motors move backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+
+    when left is pressed, the right motor moves forward while the left motor moves backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when right is pressed, the left motor moves forward while the right motor moves backward at ideally the same speed. 
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+    
+    // angled left and angled right to be continued
+    */ 
+
+    // control the motors given the power and trim adjustment values.
+    // power is power value from 0 to 255
+    // trim is trim value from -1 to 1
+    // direction is one of five, "forward", "backward", "left", "right", "stop"
     function move(direction) {
         let power = getPowerValue();
         let trim = getTrimValue();
+        // console.log("power=",power);
+        // console.log("trim=",trim);
+        // motor power values JSON
         let motor_settings = {
             'type': 'motors',
             'lmotor_power': 0,
@@ -335,9 +372,11 @@
         power = Math.min(power, 255); 
         power = Math.max(power, 0);
         $("#power").val(power); 
+        // update display
         $("#power_display").text($("#power").val()); 
         console.log('power=', power);
     }
+
     function changeTrim(deltaTrim) { 
         trim = getTrimValue();
         trim += deltaTrim; 
@@ -348,17 +387,21 @@
         $("#trim_display").text($("#trim").val());  
         console.log("trim=", trim);
     }
+
     function getPowerValue() {
         let power = $("#power").val();  
         power = parseInt(power);
         let powerDisplay = $("#power_display");
+        // update power display
         $("#power_display").text(power); 
         return power;
     }
+
     function getTrimValue() {
         let trim = $("#trim").val(); 
         trim = parseFloat(trim);
         let trimDisplay = $("#trim_display");
+        // update trim display
         $("#trim_display").text(trim);
         return trim;
     }
@@ -370,6 +413,7 @@
             case 'H': 
                 toggleBeep('off');
                 break;
+            // stop
             case 'w':
             case 'W':
             case 'a':
@@ -387,21 +431,25 @@
     function keydownHandler(event) {
         let key = event.key; 
         switch (key) {
+            // forward
             case 'w':
             case 'W':
                 console.log('forward');
                 move('forward');
                 break;
+            // left 
             case 'a':
             case 'A':
                 console.log('left');
                 move('left');
                 break;
+            // reverse 
             case 's':
             case 'S':
                 console.log('backward');
                 move('backward');
                 break;
+            // right
             case 'd':
             case 'D':
                 console.log('right');
@@ -446,6 +494,9 @@
                 break;
         }
     }
+
+    // toggle the lights on the car 
+    // state is the string state of the lights, either 'on', 'off', or 'toggle'
     function toggleLights(state) {
         let stateVal = false;
         switch (state) {
@@ -467,6 +518,9 @@
         websocket.send(JSON.stringify(light_settings));
         updateStatusIndicators();
     }
+
+    // toggle the horn on the car 
+    // state is the string state of the horn, either 'on' or 'off'
     function toggleBeep(state) {
         let stateVal = false;
         switch (state) {
