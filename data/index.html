@@ -114,7 +114,12 @@
                         ontouchstart="move('left');"
                         ontouchend="move('');"
                     ></button>
-                    <div class="dpad_spacer"></div>
+                    <!-- <div class="dpad_spacer"></div> -->
+                    <button id="stop" name="stop" class="dpad_button" 
+                    onmousedown="move('');"
+                    ontouchstart="move('');">
+                        Ebrake
+                    </button>
                     <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
                         onmousedown="move('right')"
                         onmouseup="move('');"
@@ -344,7 +349,8 @@
 
             default:
                 $('.dpad_button').removeClass('pressedbutton'); 
-                console.log('stop');
+                console.log('stop'); 
+                $('#stop').addClass('pressedbutton'); 
                 break;
         }
         console.log("motor json = ", JSON.stringify(motor_settings));
@@ -470,7 +476,10 @@
             case 'H': 
                 console.log('horn press'); 
                 toggleBeep('on');
-                break;
+                break; 
+            // ebrake 
+            case ' ': 
+                move('');
             default:
                 break;
         }

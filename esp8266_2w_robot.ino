@@ -29,7 +29,7 @@ IPAddress gateway(192,168,5,1);
 IPAddress subnet(255,255,255,0);
 //IPAddress primaryDNS(8,8,8,8);
 //IPAddress secondaryDNS(8,8,4,4);
-#define APMODE false
+#define APMODE true
 
 // status variables 
 int raw_lmotor, raw_rmotor;
@@ -144,11 +144,23 @@ void controlMotors() {
   Serial.print("left motor = ");
   Serial.println(lmotor_power);
   Serial.print("right motor = ");
-  Serial.println(rmotor_power);
-  digitalWrite(LMOTOR_DIR_PIN1, lmotor_dir);
-  digitalWrite(LMOTOR_DIR_PIN2, !lmotor_dir);
-  digitalWrite(RMOTOR_DIR_PIN1, rmotor_dir);
-  digitalWrite(RMOTOR_DIR_PIN2, !rmotor_dir);
+  Serial.println(rmotor_power); 
+  if (lmotor_power <= 0) {
+    digitalWrite(LMOTOR_DIR_PIN1, false);
+    digitalWrite(LMOTOR_DIR_PIN2, false);
+  } 
+  else {
+    digitalWrite(LMOTOR_DIR_PIN1, lmotor_dir);
+    digitalWrite(LMOTOR_DIR_PIN2, !lmotor_dir);
+  }
+  if (rmotor_power <= 0) {
+    digitalWrite(RMOTOR_DIR_PIN1, false);
+    digitalWrite(RMOTOR_DIR_PIN2, false);
+  }
+  else {
+    digitalWrite(RMOTOR_DIR_PIN1, rmotor_dir);
+    digitalWrite(RMOTOR_DIR_PIN2, !rmotor_dir);
+  }
   analogWrite(LMOTOR_SPEED_PIN, lmotor_power);
   analogWrite(RMOTOR_SPEED_PIN, rmotor_power);
   sendStatusUpdate();
