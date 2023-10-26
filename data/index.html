@@ -103,37 +103,37 @@
                 <div id="dpad_grid">
                     <div class="dpad_spacer"></div>
                     <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
-                        onmousedown="move('forward'); "
-                        onmouseup="move('');"
-                        ontouchstart="move('forward');"
-                        ontouchend="move('');"
+                        onmousedown="move(event, 'forward'); "
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'forward');"
+                        ontouchend="move(event, '');"
                     ></button>
                     <div class="dpad_spacer"></div>
                     <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"
-                        onmousedown="move('left');"
-                        onmouseup="move('');"
-                        ontouchstart="move('left');"
-                        ontouchend="move('');"
+                        onmousedown="move(event, 'left');"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'left');"
+                        ontouchend="move(event, '');"
                     ></button>
                     <!-- <div class="dpad_spacer"></div> -->
                     <button id="brake" name="brake" class="dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
-                    onmousedown="move('brake');"
-                    onmouseup="move('');"
-                    ontouchstart="move('brake');"
-                    ontouchend="move('');"
+                    onmousedown="move(event, 'brake');"
+                    onmouseup="move(event, '');"
+                    ontouchstart="move(event, 'brake');"
+                    ontouchend="move(event, '');"
                     ></button>
                     <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
-                        onmousedown="move('right')"
-                        onmouseup="move('');"
-                        ontouchstart="move('right')"
-                        ontouchend="move('');"
+                        onmousedown="move(event, 'right')"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'right')"
+                        ontouchend="move(event, '');"
                     ></button>
                     <div class="dpad_spacer"></div>
                     <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
-                        onmousedown="move('backward');"
-                        onmouseup="move('');"
-                        ontouchstart="move('backward');"
-                        ontouchend="move('');"
+                        onmousedown="move(event, 'backward');"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'backward');"
+                        ontouchend="move(event, '');"
                     ></button>
                     <div class="dpad_spacer"></div>
                 </div>
@@ -273,7 +273,8 @@
         }
         initWebSocket();
     });
-    function move(direction) {
+    function move(event, direction) {
+        event.preventDefault();
         let power = getPowerValue();
         let trim = getTrimValue();
         let motor_settings = {
@@ -281,7 +282,6 @@
             'lmotor_power': 0,
             'rmotor_power': 0
         }
-        
         switch (direction) {
             case "forward":
                 console.log("trim = ", trim);
@@ -379,7 +379,7 @@
             case 'd':
             case 'D':
             case ' ':
-                move('');
+                move(event, '');
                 break; 
         }
     }
@@ -390,22 +390,22 @@
             case 'w':
             case 'W':
                 console.log('forward');
-                move('forward');
+                move(event, 'forward');
                 break;
             case 'a':
             case 'A':
                 console.log('left');
-                move('left');
+                move(event, 'left');
                 break;
             case 's':
             case 'S':
                 console.log('backward');
-                move('backward');
+                move(event, 'backward');
                 break;
             case 'd':
             case 'D':
                 console.log('right');
-                move('right');
+                move(event, 'right');
                 break;
             // decrease power 
             case '-': 
@@ -441,7 +441,7 @@
                 break; 
             // ebrake 
             case ' ': 
-                move('brake');
+                move(event, 'brake');
             default:
                 break;
         }
