@@ -5,16 +5,16 @@
 #include <LittleFS.h> 
 
 // motor pins 
-#define LMOTOR_SPEED_PIN 4
-#define RMOTOR_SPEED_PIN 5
-#define LMOTOR_DIR_PIN1 12
-#define LMOTOR_DIR_PIN2 13
-#define RMOTOR_DIR_PIN1 14
-#define RMOTOR_DIR_PIN2 15
+#define LMOTOR_SPEED_PIN 4 // D2
+#define RMOTOR_SPEED_PIN 5 // D1
+#define LMOTOR_DIR_PIN1 12 // D6
+#define LMOTOR_DIR_PIN2 13 // D7
+#define RMOTOR_DIR_PIN1 14 // D5
+#define RMOTOR_DIR_PIN2 15 // D8
 // light pin
-#define LIGHTS_PIN 0
+#define LIGHTS_PIN 0 // D3
 // horn pin 
-#define HORN_PIN 1
+#define HORN_PIN 1 // TX
 
 // async web server
 AsyncWebServer server(80); 
