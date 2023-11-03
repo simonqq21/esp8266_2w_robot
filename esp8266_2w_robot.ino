@@ -167,8 +167,8 @@ void disconnectBrake() {
   digitalWrite(LMOTOR_DIR_PIN2, false);
   digitalWrite(RMOTOR_DIR_PIN1, false);
   digitalWrite(RMOTOR_DIR_PIN2, false);
-  digitalWrite(LMOTOR_SPEED_PIN, false);
-  digitalWrite(RMOTOR_SPEED_PIN, false);
+  digitalWrite(LMOTOR_SPEED_PIN, true);
+  digitalWrite(RMOTOR_SPEED_PIN, true);
 }
 
 void controlLights() {
@@ -252,6 +252,8 @@ void setup() {
     request->send(LittleFS, "/lights.svg", "image/svg+xml", false);});
     server.on("/horn.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/horn.svg", "image/svg+xml", false);});
+    server.on("/s.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/s.js", "text/javascript", false);});
   server.begin();
   
   disconnectBrake();

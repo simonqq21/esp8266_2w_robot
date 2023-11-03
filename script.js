@@ -1,198 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
-    <title></title>
-    <style>
-        * {
-            font-family: Arial, serif;
-        }
-        #movementControls, #toggleControls {
-            display: block;
-            text-align: center;
-        }
-        #dpad_grid_container {
-            display: inline-block;
-        }
-        #dpad_grid {
-            display: grid;
-            grid-template-columns: auto auto auto;
-            align-items: center;
-        }
-        div {
-            margin: 0.5vw;
-        }
-        .dpad_element {
-            height: 10vh;
-            width: 10vh;
-            margin: 0;
-        }
-        .dpad_button {
-            background-color: green;
-            padding: 0;
-        }
-        .dpad_image {
-            height: 10vh;
-            width: 10vh;
-            padding: 0;
-        }
-        .toggle_button {
-            height: 10vh;
-            width: 10vh;
-        }
-        .toggle_button_image {
-            height: 8vh;
-            width: 8vh;
-        }
-        .plusminusdiv {
-            display: block;
-            
-        }
-        .plusminusbuttons {
-            height: 5vh;
-            width: 5vh;
-            padding: 0;
-            font-size: 4vh;
-        }       
-        .sliderdiv {
-            display: inline-block;
-        }
-        input[type=range] {
-            display: inline-block;
-            width: 40vw;
-            margin: 2vh 0 0;
-            accent-color: green;
-        }
-        /* #power::-moz-range-thumb {  
-            border-radius: 50%;
-            height: 1.5vw;
-            width: 1.5vw;
-        } 
-        #power::-moz-range-track {
-            height: 0.5vw;
-        }  */
-        #toggleControls > div {
-            display: inline-block;
-            margin: 0 2vw;
-        }
-        .offbutton {
-            background-color: #ff0000;
-        }
-        .onbutton {
-            background-color: #00ff00;
-        }
-        .pressedbutton {
-            background-color: #00ffff;
-        }
-    </style>
-    <script src="jquery_min.js"></script>
-</head>  
-<body onkeydown="keydownHandler(event);" onkeyup="keyupHandler(event);">
-    <div>
-        <header>
-            <h1>ESP8266 WiFi robot</h1>
-        </header>
-    </div>
-    <div id="controls">
-        <div id="movementControls">
-            <div id="dpad_grid_container">
-                <div id="dpad_grid">
-                    <div class="dpad_element"></div>
-                    <button id="forward" name="forward" class="dpad_element dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
-                        onmousedown="move(event, 'forward'); "
-                        onmouseup="move(event, '');"
-                        ontouchstart="move(event, 'forward');"
-                        ontouchend="move(event, '');"
-                    ></button>
-                    <div class="dpad_element"></div>
-                    <button id="left" name="left" class="dpad_element dpad_button"><img src="left.svg" alt="left" class="dpad_image"
-                        onmousedown="move(event, 'left');"
-                        onmouseup="move(event, '');"
-                        ontouchstart="move(event, 'left');"
-                        ontouchend="move(event, '');"
-                    ></button>
-                    <!-- <div class="dpad_element"></div> -->
-                    <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
-                    onmousedown="move(event, 'brake');"
-                    onmouseup="move(event, '');"
-                    ontouchstart="move(event, 'brake');"
-                    ontouchend="move(event, '');"
-                    ></button>
-                    <button id="right" name="right" class="dpad_element dpad_button"><img src="right.svg" alt="right" class="dpad_image"
-                        onmousedown="move(event, 'right')"
-                        onmouseup="move(event, '');"
-                        ontouchstart="move(event, 'right')"
-                        ontouchend="move(event, '');"
-                    ></button>
-                    <div class="dpad_element"></div>
-                    <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
-                        onmousedown="move(event, 'backward');"
-                        onmouseup="move(event, '');"
-                        ontouchstart="move(event, 'backward');"
-                        ontouchend="move(event, '');"
-                    ></button>
-                    <div class="dpad_element"></div>
-                </div>
-            </div>
-            <br>
-            <div class="sliderdiv" id="powerControl">
-                <div class="plusminusdiv">
-                    <button class="plusminusbuttons" id="powerMinusBtn" onclick="" style="float: left;">-</button>
-                    <button class="plusminusbuttons" id="powerPlusBtn" style="float: right;">+</button>
-                </div>
-                <br>
-                <label for="power">power adjustment:  </label>
-                <br>
-                <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
-                    oninput="getPowerValue()"
-                ></input>
-                <p id="power_display">0</p>
-            </div>
-            <br>
-            <div class="sliderdiv" id="trimControl">
-                <div class="plusminusdiv">
-                    <button class="plusminusbuttons" id="trimMinusBtn" style="float: left;">-</button>
-                    <button class="plusminusbuttons" id="trimPlusBtn" style="float: right;">+</button>
-                </div>
-                <br>
-                <label for="trim">Trim adjustment:  </label>
-                <br>
-                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
-                    oninput="getTrimValue()"
-                ></input>
-                <p id="trim_display">0</p>
-            </div>
-        </div>
-        <div id="toggleControls">
-            <div id="lightControl">
-                <button id="lights" name="lights" value="lights"  class="toggle_button"
-                    onclick="toggleLights('toggle');"
-                ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
-                <br>
-                <label for="lights">Lights</label>
-            </div>
-            <div if="beepControl">
-                <button id="beep" name="beep" value="beep" class="toggle_button"
-                    onmousedown="toggleBeep('on')"
-                    onmouseup="toggleBeep('off')"
-                    ontouchstart="toggleBeep('on')"
-                    ontouchend="toggleBeep('off')"
-                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
-                </button>
-                <br>
-                <label for="beep">Beep</label>
-            </div>
-        </div> 
-        <div id="instructions">
-            <h2>Instructions</h2>
-            <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim.</p>
-            <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
-            <p>The toggle controls below control the lights and the buzzer horn.</p>    
-        </div>
-    </div>      
-</body>
-<script type="text/javascript">
-    let gateway = `ws://${window.location.hostname}/ws`;
+let gateway = `ws://${window.location.hostname}/ws`;
     let websocket; 
     // status update JSON format
     let robotStatus = {   
@@ -202,6 +8,10 @@
         'lmotor_power': 0,
         'rmotor_power': 0
     }
+    // power and trim increment values
+    let powerInc = 2.5; 
+    let trimInc = 0.025; 
+
     function initWebSocket() {
         // alert('Websocket initializing');
         websocket = new WebSocket(gateway);
@@ -272,6 +82,40 @@
         initWebSocket();
         setInterval(requestStatus, 200); 
     });
+
+    /*
+    power = power slider value, from 0 to 255, default 100
+    trim = trim slider value, from -1 to 1, default 0
+    The power is the maximum power value of either or both motors. 
+    The trim is the difference in power between the left and the right motors to adjust for any deviations in direction when the 
+    robot is moving straight.
+
+    The two wheeled robot has two motors, the left motor and the right motor. 
+    The two motors may have a different speed even with the same power values. 
+
+    when forward is pressed, both motors move forward at ideally the same speed.
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when backward is pressed, both motors move backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+
+    when left is pressed, the right motor moves forward while the left motor moves backward at ideally the same speed. 
+    lmotor_speed = -power * (1 + trim)
+    rmotor_speed = power * (1 - trim)
+
+    when right is pressed, the left motor moves forward while the right motor moves backward at ideally the same speed. 
+    lmotor_speed = power * (1 + trim)
+    rmotor_speed = -power * (1 - trim)
+    
+    // angled left and angled right to be continued
+    */ 
+
+    // control the motors given the power and trim adjustment values.
+    // power is power value from 0 to 255
+    // trim is trim value from -1 to 1
+    // direction is one of five, "forward", "backward", "left", "right", "stop"
     function move(event, direction) {
         event.preventDefault();
         let power = getPowerValue();
@@ -365,42 +209,48 @@
     function keyupHandler(event) {
         let key = event.key;  
         switch(key) {
+            // off horn
             case 'h': 
             case 'H': 
                 toggleBeep('off');
                 break;
-            case 'w':
-            case 'W':
-            case 'a':
-            case 'A':
-            case 's':
-            case 'S':
-            case 'd':
-            case 'D':
-            case ' ':
+            // stop when movement keys is released 
+            // case 'w':
+            // case 'W':
+            // case 'a':
+            // case 'A':
+            // case 's':
+            // case 'S':
+            // case 'd':
+            // case 'D':
+            // case ' ':
+            default:
                 move(event, '');
-                break; 
         }
     }
 
     function keydownHandler(event) {
         let key = event.key; 
         switch (key) {
+            // forward
             case 'w':
             case 'W':
                 console.log('forward');
                 move(event, 'forward');
                 break;
+            // left 
             case 'a':
             case 'A':
                 console.log('left');
                 move(event, 'left');
                 break;
+            // reverse 
             case 's':
             case 'S':
                 console.log('backward');
                 move(event, 'backward');
                 break;
+            // right
             case 'd':
             case 'D':
                 console.log('right');
@@ -409,22 +259,22 @@
             // decrease power 
             case '-': 
                 console.log('power -'); 
-                changePower(-5);
+                changePower(-powerInc);
                 break;
             // increase power 
             case '=': 
                 console.log('power +'); 
-                changePower(5);
+                changePower(powerInc);
                 break;
             // decrease trim 
             case '[': 
                 console.log('trim -'); 
-                changeTrim(-0.05);
+                changeTrim(-trimInc);
                 break;
             // increase trim 
             case ']': 
                 console.log('trim +'); 
-                changeTrim(0.05);
+                changeTrim(trimInc);
                 break;
             // toggle lights 
             case 'l': 
@@ -445,6 +295,8 @@
                 break;
         }
     }
+    // toggle the lights on the car 
+    // state is the string state of the lights, either 'on', 'off', or 'toggle'
     function toggleLights(state) {
         let stateVal = false;
         switch (state) {
@@ -466,6 +318,8 @@
         websocket.send(JSON.stringify(light_settings));
         updateStatusIndicators();
     }
+    // toggle the horn on the car 
+    // state is the string state of the horn, either 'on' or 'off'
     function toggleBeep(state) {
         let stateVal = false;
         switch (state) {
@@ -489,5 +343,3 @@
             (navigator.maxTouchPoints > 0) || 
             (navigator.msMaxTouchPoints > 0);
     }
-</script>
-</html>

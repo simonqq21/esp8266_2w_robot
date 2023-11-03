@@ -7,89 +7,86 @@
         * {
             font-family: Arial, serif;
         }
-
         #movementControls, #toggleControls {
             display: block;
             text-align: center;
         }
-
         #dpad_grid_container {
             display: inline-block;
         }
-
         #dpad_grid {
             display: grid;
             grid-template-columns: auto auto auto;
             align-items: center;
         }
-
         div {
             margin: 0.5vw;
         }
-
-        .dpad_spacer {
-            height: 6vw;
-            width: 6vw;
+        .dpad_element {
+            height: 10vh;
+            width: 10vh;
             margin: 0;
         }
-
         .dpad_button {
-            height: 6vw;
-            width: 6vw;
             background-color: green;
             padding: 0;
         }
-
         .dpad_image {
-            height: 6vw;
-            width: 6vw;
+            height: 10vh;
+            width: 10vh;
             padding: 0;
         }
-
+        .toggle_button {
+            height: 10vh;
+            width: 10vh;
+        }
+        .toggle_button_image {
+            height: 8vh;
+            width: 8vh;
+        }
+        .plusminusdiv {
+            display: block;
+            
+        }
+        .plusminusbuttons {
+            height: 5vh;
+            width: 5vh;
+            padding: 0;
+            font-size: 4vh;
+        }       
+        .sliderdiv {
+            display: inline-block;
+        }
         input[type=range] {
             display: inline-block;
             width: 40vw;
+            margin: 2vh 0 0;
             accent-color: green;
         }
-
         /* #power::-moz-range-thumb {  
             border-radius: 50%;
             height: 1.5vw;
             width: 1.5vw;
-        }
-       
+        } 
         #power::-moz-range-track {
             height: 0.5vw;
         }  */
-
         #toggleControls > div {
-            display: inline;
+            display: inline-block;
+            margin: 0 2vw;
         }
-        
-        .toggle_button {
-            height: 5vw;
-            width: 5vw;
-            padding: 0.5vw;
-        }
-
-        .toggle_button_image {
-            height: 4vw;
-            width: 4vw;
-        }
-
         .offbutton {
             background-color: #ff0000;
         }
-
         .onbutton {
             background-color: #00ff00;
         }
-
         .pressedbutton {
             background-color: #00ffff;
         }
     </style>
-    <script src="jquery_min.js"></script>
+    <script type="text/javascript" src="jquery_min.js"></script>
+    <script type="text/javascript" src="s.js"></script>
 </head>  
 <body onkeydown="keydownHandler(event);" onkeyup="keyupHandler(event);">
     <div>
@@ -101,65 +98,78 @@
         <div id="movementControls">
             <div id="dpad_grid_container">
                 <div id="dpad_grid">
-                    <div class="dpad_spacer"></div>
-                    <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
-                        onmousedown="move('forward'); "
-                        onmouseup="move('');"
-                        ontouchstart="move('forward');"
-                        ontouchend="move('');"
+                    <div class="dpad_element"></div>
+                    <button id="forward" name="forward" class="dpad_element dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
+                        onmousedown="move(event, 'forward'); "
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'forward');"
+                        ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
-                    <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"
-                        onmousedown="move('left');"
-                        onmouseup="move('');"
-                        ontouchstart="move('left');"
-                        ontouchend="move('');"
+                    <div class="dpad_element"></div>
+                    <button id="left" name="left" class="dpad_element dpad_button"><img src="left.svg" alt="left" class="dpad_image"
+                        onmousedown="move(event, 'left');"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'left');"
+                        ontouchend="move(event, '');"
                     ></button>
-                    <!-- <div class="dpad_spacer"></div> -->
-                    <button id="brake" name="brake" class="dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
-                    onmousedown="move('brake');"
-                    onmouseup="move('');"
-                    ontouchstart="move('brake');"
-                    ontouchend="move('');"
+                    <!-- <div class="dpad_element"></div> -->
+                    <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
+                    onmousedown="move(event, 'brake');"
+                    onmouseup="move(event, '');"
+                    ontouchstart="move(event, 'brake');"
+                    ontouchend="move(event, '');"
                     ></button>
-                    <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
-                        onmousedown="move('right')"
-                        onmouseup="move('');"
-                        ontouchstart="move('right')"
-                        ontouchend="move('');"
+                    <button id="right" name="right" class="dpad_element dpad_button"><img src="right.svg" alt="right" class="dpad_image"
+                        onmousedown="move(event, 'right')"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'right')"
+                        ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
-                    <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
-                        onmousedown="move('backward');"
-                        onmouseup="move('');"
-                        ontouchstart="move('backward');"
-                        ontouchend="move('');"
+                    <div class="dpad_element"></div>
+                    <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
+                        onmousedown="move(event, 'backward');"
+                        onmouseup="move(event, '');"
+                        ontouchstart="move(event, 'backward');"
+                        ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
+                    <div class="dpad_element"></div>
                 </div>
             </div>
-            <div id="powerControl">
-                <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
+            <br>
+            <div class="sliderdiv" id="powerControl">
+                <div class="plusminusdiv">
+                    <button class="plusminusbuttons" id="powerMinusBtn" onclick="changePower(-powerInc);" style="float: left;">-</button>
+                    <button class="plusminusbuttons" id="powerPlusBtn" onclick="changePower(powerInc);" style="float: right;">+</button>
+                </div>
+                <br>
+                <label for="power">power adjustment:  </label>
+                <br>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
                 ></input>
                 <p id="power_display">0</p>
             </div>
-            <div id="trimControl">
-                <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
-                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
+            <br>
+            <div class="sliderdiv" id="trimControl">
+                <div class="plusminusdiv">
+                    <button class="plusminusbuttons" id="trimMinusBtn" onclick="changeTrim(-trimInc);" style="float: left;">-</button>
+                    <button class="plusminusbuttons" id="trimPlusBtn" onclick="changeTrim(trimInc);" style="float: right;">+</button>
+                </div>
+                <br>
+                <label for="trim">Trim adjustment:  </label>
+                <br>
+                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
                 ></input>
                 <p id="trim_display">0</p>
             </div>
-
         </div>
-        
         <div id="toggleControls">
             <div id="lightControl">
                 <button id="lights" name="lights" value="lights"  class="toggle_button"
                     onclick="toggleLights('toggle');"
                 ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
+                <br>
                 <label for="lights">Lights</label>
             </div>
             <div if="beepControl">
@@ -168,381 +178,18 @@
                     onmouseup="toggleBeep('off')"
                     ontouchstart="toggleBeep('on')"
                     ontouchend="toggleBeep('off')"
-                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image"></button>
+                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
+                </button>
+                <br>
                 <label for="beep">Beep</label>
             </div>
         </div> 
         <div id="instructions">
             <h2>Instructions</h2>
-            <p>Move the joystick with your mouse or finger to move the robot.</p>
-            <p>On a desktop browser, the WASD keys can be used to move the robot 
-                and the - and + keys can be used to adjust the power.</p>
-            <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p>
+            <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim.</p>
+            <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
             <p>The toggle controls below control the lights and the buzzer horn.</p>    
         </div>
-    </div>
-           
+    </div>      
 </body>
-<script type="text/javascript">
-    let gateway = `ws://${window.location.hostname}/ws`;
-    let websocket; 
-
-    // status update JSON format
-    let robotStatus = {   
-        'type': 'status',
-        'lightState': false,
-        'beepState': false,
-        'lmotor_power': 0,
-        'rmotor_power': 0
-    }
-
-    function initWebSocket() {
-        // alert('Websocket initializing');
-        websocket = new WebSocket(gateway);
-        websocket.onopen = onOpen; 
-        websocket.onclose = onClose; 
-        websocket.onmessage = onMessage;
-    }
-
-    // runs when websocket opens
-    function onOpen(event) {
-        // alert('Connection opened');
-        // JSON to request for a status update
-        requestStatus();
-    }
-
-    function requestStatus() {
-        jsondata = {'command': 'update'}
-        websocket.send(jsondata);
-        updateStatusIndicators();
-    }
-
-    setInterval(requestStatus, 200); 
-
-    // runs when websocket closes
-    function onClose(event) {
-        // alert('Connection closed');
-        setTimeout(initWebSocket, 2000); // restart websocket
-    }
-
-    // runs when websocket receives message from server
-    function onMessage(event) {
-        console.log(event.data);
-        robotStatus = JSON.parse(event.data);
-    } 
-
-    // update the status indicators on the webpage
-    function updateStatusIndicators() {
-        let lightsButton = $("#lights");
-        let beepButton = $("#beep");
-        // update beep button status
-        if (robotStatus.beepState) {
-            beepButton.addClass("onbutton");
-            beepButton.removeClass("offbutton");
-        }
-        else {
-            beepButton.addClass("offbutton");
-            beepButton.removeClass("onbutton");
-        }
-        // update lights button status
-        if (robotStatus.lightState) {
-            lightsButton.addClass("onbutton");
-            lightsButton.removeClass("offbutton");
-        }
-        else {
-            lightsButton.addClass("offbutton");
-            lightsButton.removeClass("onbutton");
-        }
-    }
-
-    $(document).ready(function() {
-        getPowerValue(); 
-        getTrimValue();
-        updateStatusIndicators();
-        if (isTouchEnabled()) {
-            for (element of $("input, button")) {
-                element.onmousedown = ""; 
-                element.onmouseup = "";
-            }    
-        }
-        else {
-            for (element of $("input, button")) {
-                element.ontouchstart = ""; 
-                element.ontouchend = "";
-            } 
-        }
-        initWebSocket();
-    });
-
-    /*
-    power = power slider value, from 0 to 255, default 100
-    trim = trim slider value, from -1 to 1, default 0
-    The power is the maximum power value of either or both motors. 
-    The trim is the difference in power between the left and the right motors to adjust for any deviations in direction when the 
-    robot is moving straight.
-
-    The two wheeled robot has two motors, the left motor and the right motor. 
-    The two motors may have a different speed even with the same power values. 
-
-    when forward is pressed, both motors move forward at ideally the same speed.
-    lmotor_speed = power * (1 + trim)
-    rmotor_speed = power * (1 - trim)
-
-    when backward is pressed, both motors move backward at ideally the same speed. 
-    lmotor_speed = -power * (1 + trim)
-    rmotor_speed = -power * (1 - trim)
-
-    when left is pressed, the right motor moves forward while the left motor moves backward at ideally the same speed. 
-    lmotor_speed = -power * (1 + trim)
-    rmotor_speed = power * (1 - trim)
-
-    when right is pressed, the left motor moves forward while the right motor moves backward at ideally the same speed. 
-    lmotor_speed = power * (1 + trim)
-    rmotor_speed = -power * (1 - trim)
-    
-    // angled left and angled right to be continued
-    */ 
-
-    // control the motors given the power and trim adjustment values.
-    // power is power value from 0 to 255
-    // trim is trim value from -1 to 1
-    // direction is one of five, "forward", "backward", "left", "right", "stop"
-    function move(direction) {
-        let power = getPowerValue();
-        let trim = getTrimValue();
-        // console.log("power=",power);
-        // console.log("trim=",trim);
-        // motor power values JSON
-        let motor_settings = {
-            'type': 'motors',
-            'lmotor_power': 0,
-            'rmotor_power': 0
-        }
-        
-        switch (direction) {
-            case "forward":
-                console.log("trim = ", trim);
-                motor_settings.lmotor_power = power * (1 + trim); 
-                motor_settings.rmotor_power = power * (1 - trim);
-                $('#forward').addClass('pressedbutton'); 
-                console.log('forward');
-                break;
-            
-            case "backward": 
-                motor_settings.lmotor_power = -power * (1 + trim); 
-                motor_settings.rmotor_power = -power * (1 - trim);
-                $('#backward').addClass('pressedbutton'); 
-                console.log('backward');
-                break; 
-            
-            case "left": 
-                motor_settings.lmotor_power = -power * (1 + trim); 
-                motor_settings.rmotor_power = power * (1 - trim);
-                $('#left').addClass('pressedbutton'); 
-                console.log('left');
-                break; 
-
-            case "right": 
-                motor_settings.lmotor_power = power * (1 + trim); 
-                motor_settings.rmotor_power = -power * (1 - trim);
-                $('#right').addClass('pressedbutton'); 
-                console.log('right');
-                break; 
-
-            case "brake": 
-                motor_settings.lmotor_power = -999; 
-                motor_settings.rmotor_power = -999;
-                $('#brake').addClass('pressedbutton'); 
-                console.log('brake');
-                break; 
-
-            case "stop":
-            default:
-                $('.dpad_button').removeClass('pressedbutton'); 
-                console.log('stop'); 
-                break;
-        }
-        console.log("motor json = ", JSON.stringify(motor_settings));
-        websocket.send(JSON.stringify(motor_settings));
-    }
-
-    function changePower(deltaPower) {
-        power = getPowerValue(); 
-        power += deltaPower; 
-        power = Math.min(power, 255); 
-        power = Math.max(power, 0);
-        $("#power").val(power); 
-        // update display
-        $("#power_display").text($("#power").val()); 
-        console.log('power=', power);
-    }
-
-    function changeTrim(deltaTrim) { 
-        trim = getTrimValue();
-        trim += deltaTrim; 
-        trim = Math.min(trim, 1); 
-        trim = Math.max(trim, -1);
-        $("#trim").val(trim); 
-        // update display
-        $("#trim_display").text($("#trim").val());  
-        console.log("trim=", trim);
-    }
-
-    function getPowerValue() {
-        let power = $("#power").val();  
-        power = parseInt(power);
-        let powerDisplay = $("#power_display");
-        // update power display
-        $("#power_display").text(power); 
-        return power;
-    }
-
-    function getTrimValue() {
-        let trim = $("#trim").val(); 
-        trim = parseFloat(trim);
-        let trimDisplay = $("#trim_display");
-        // update trim display
-        $("#trim_display").text(trim);
-        return trim;
-    }
-
-    function keyupHandler(event) {
-        let key = event.key;  
-        switch(key) {
-            case 'h': 
-            case 'H': 
-                toggleBeep('off');
-                break;
-            // stop
-            case 'w':
-            case 'W':
-            case 'a':
-            case 'A':
-            case 's':
-            case 'S':
-            case 'd':
-            case 'D':
-            case ' ':
-                move('');
-                break; 
-        }
-    }
-
-    function keydownHandler(event) {
-        let key = event.key; 
-        switch (key) {
-            // forward
-            case 'w':
-            case 'W':
-                console.log('forward');
-                move('forward');
-                break;
-            // left 
-            case 'a':
-            case 'A':
-                console.log('left');
-                move('left');
-                break;
-            // reverse 
-            case 's':
-            case 'S':
-                console.log('backward');
-                move('backward');
-                break;
-            // right
-            case 'd':
-            case 'D':
-                console.log('right');
-                move('right');
-                break;
-            // decrease power 
-            case '-': 
-                console.log('power -'); 
-                changePower(-5);
-                break;
-            // increase power 
-            case '=': 
-                console.log('power +'); 
-                changePower(5);
-                break;
-            // decrease trim 
-            case '[': 
-                console.log('trim -'); 
-                changeTrim(-0.05);
-                break;
-            // increase trim 
-            case ']': 
-                console.log('trim +'); 
-                changeTrim(0.05);
-                break;
-            // toggle lights 
-            case 'l': 
-            case 'L': 
-                console.log('lights toggle'); 
-                toggleLights('toggle');
-                break;
-            // sound horn 
-            case 'h': 
-            case 'H': 
-                console.log('horn press'); 
-                toggleBeep('on');
-                break; 
-            // ebrake 
-            case ' ': 
-                move('brake');
-            default:
-                break;
-        }
-    }
-
-    // toggle the lights on the car 
-    // state is the string state of the lights, either 'on', 'off', or 'toggle'
-    function toggleLights(state) {
-        let stateVal = false;
-        switch (state) {
-            case 'on':
-                stateVal = true;
-                break;
-            
-            case 'toggle': 
-                stateVal = !robotStatus.lightState;
-                break;
-
-            default:
-                break;
-        }
-        let light_settings = {
-            'type': 'lights', 
-            'lights_state': stateVal
-        }
-        websocket.send(JSON.stringify(light_settings));
-        updateStatusIndicators();
-    }
-
-    // toggle the horn on the car 
-    // state is the string state of the horn, either 'on' or 'off'
-    function toggleBeep(state) {
-        let stateVal = false;
-        switch (state) {
-            case 'on':
-                stateVal = true;
-                break;
-        
-            default:
-                break;
-        }
-        let horn_settings = {
-            'type': 'beep', 
-            'horn_state': stateVal
-        }
-        websocket.send(JSON.stringify(horn_settings));
-        updateStatusIndicators();
-    }
-
-    function isTouchEnabled() {
-        return ('ontouchstart' in window) || 
-            (navigator.maxTouchPoints > 0) || 
-            (navigator.msMaxTouchPoints > 0);
-    }
-</script>
 </html>
