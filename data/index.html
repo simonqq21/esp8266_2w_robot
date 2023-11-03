@@ -27,34 +27,32 @@
             margin: 0.5vw;
         }
 
-        .dpad_spacer {
-            height: 6vw;
-            width: 6vw;
+        .dpad_element {
+            height: 10vh;
+            width: 10vh;
             margin: 0;
         }
 
         .dpad_button {
-            height: 6vw;
-            width: 6vw;
             background-color: green;
             padding: 0;
         }
 
         .dpad_image {
-            height: 6vw;
-            width: 6vw;
+            height: 10vh;
+            width: 10vh;
             padding: 0;
         }
 
         .toggle_button {
-            height: 5vw;
-            width: 5vw;
+            height: 10vh;
+            width: 10vh;
             padding: 0.5vw;
         }
 
         .toggle_button_image {
-            height: 4vw;
-            width: 4vw;
+            height: 9vh;
+            width: 9vh;
         }
 
         input[type=range] {
@@ -74,7 +72,7 @@
         }  */
 
         #toggleControls > div {
-            display: inline;
+            display: inline-block;
         }
         
         .offbutton {
@@ -101,55 +99,64 @@
         <div id="movementControls">
             <div id="dpad_grid_container">
                 <div id="dpad_grid">
-                    <div class="dpad_spacer"></div>
-                    <button id="forward" name="forward" class="dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
+                    <div class="dpad_element"></div>
+                    <button id="forward" name="forward" class="dpad_element dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
                         onmousedown="move(event, 'forward'); "
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'forward');"
                         ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
-                    <button id="left" name="left" class="dpad_button"><img src="left.svg" alt="left" class="dpad_image"
+                    <div class="dpad_element"></div>
+                    <button id="left" name="left" class="dpad_element dpad_button"><img src="left.svg" alt="left" class="dpad_image"
                         onmousedown="move(event, 'left');"
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'left');"
                         ontouchend="move(event, '');"
                     ></button>
-                    <!-- <div class="dpad_spacer"></div> -->
-                    <button id="brake" name="brake" class="dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
+                    <!-- <div class="dpad_element"></div> -->
+                    <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
                     onmousedown="move(event, 'brake');"
                     onmouseup="move(event, '');"
                     ontouchstart="move(event, 'brake');"
                     ontouchend="move(event, '');"
                     ></button>
-                    <button id="right" name="right" class="dpad_button"><img src="right.svg" alt="right" class="dpad_image"
+                    <button id="right" name="right" class="dpad_element dpad_button"><img src="right.svg" alt="right" class="dpad_image"
                         onmousedown="move(event, 'right')"
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'right')"
                         ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
-                    <button id="backward" name="backward" class="dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
+                    <div class="dpad_element"></div>
+                    <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
                         onmousedown="move(event, 'backward');"
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'backward');"
                         ontouchend="move(event, '');"
                     ></button>
-                    <div class="dpad_spacer"></div>
+                    <div class="dpad_element"></div>
                 </div>
             </div>
-            <div id="powerControl">
+            <div id="powerControl" >
+                <div style="display: block; text-align: left;">
+                    <button>-</button>
+                    <button>+</button>
+                </div>
+                
+                <br>
                 <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
                 ></input>
+                
                 <p id="power_display">0</p>
             </div>
             <div id="trimControl">
                 <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
+                <button>-</button>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
                     oninput="getTrimValue()"
                 ></input>
+                <button>+</button>
                 <p id="trim_display">0</p>
             </div>
 
@@ -160,6 +167,7 @@
                 <button id="lights" name="lights" value="lights"  class="toggle_button"
                     onclick="toggleLights('toggle');"
                 ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
+                <br>
                 <label for="lights">Lights</label>
             </div>
             <div if="beepControl">
@@ -168,7 +176,9 @@
                     onmouseup="toggleBeep('off')"
                     ontouchstart="toggleBeep('on')"
                     ontouchend="toggleBeep('off')"
-                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image"></button>
+                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
+                </button>
+                <br>
                 <label for="beep">Beep</label>
             </div>
         </div> 
@@ -273,6 +283,7 @@
         }
         initWebSocket();
     });
+    
     function move(event, direction) {
         event.preventDefault();
         let power = getPowerValue();
