@@ -7,82 +7,80 @@
         * {
             font-family: Arial, serif;
         }
-
         #movementControls, #toggleControls {
             display: block;
             text-align: center;
         }
-
         #dpad_grid_container {
             display: inline-block;
         }
-
         #dpad_grid {
             display: grid;
             grid-template-columns: auto auto auto;
             align-items: center;
         }
-
         div {
             margin: 0.5vw;
         }
-
         .dpad_element {
             height: 10vh;
             width: 10vh;
             margin: 0;
         }
-
         .dpad_button {
             background-color: green;
             padding: 0;
         }
-
         .dpad_image {
             height: 10vh;
             width: 10vh;
             padding: 0;
         }
-
         .toggle_button {
             height: 10vh;
             width: 10vh;
-            padding: 0.5vw;
         }
-
         .toggle_button_image {
-            height: 9vh;
-            width: 9vh;
+            height: 8vh;
+            width: 8vh;
         }
-
+        .plusminusdiv {
+            display: block;
+            
+        }
+        .plusminusbuttons {
+            height: 5vh;
+            width: 5vh;
+            padding: 0;
+            font-size: 4vh;
+        }       
+        .sliderdiv {
+            display: inline-block;
+        }
         input[type=range] {
             display: inline-block;
             width: 40vw;
+            margin: 2vh 0 0;
             accent-color: green;
         }
-
         /* #power::-moz-range-thumb {  
             border-radius: 50%;
             height: 1.5vw;
             width: 1.5vw;
-        }
-       
+        } 
         #power::-moz-range-track {
             height: 0.5vw;
         }  */
-
         #toggleControls > div {
             display: inline-block;
+            margin: 0 2vw;
         }
-        
         .offbutton {
             background-color: #ff0000;
         }
-
         .onbutton {
             background-color: #00ff00;
         }
-
         .pressedbutton {
             background-color: #00ffff;
         }
@@ -136,32 +134,35 @@
                     <div class="dpad_element"></div>
                 </div>
             </div>
-            <div id="powerControl" >
-                <div style="display: block; text-align: left;">
-                    <button>-</button>
-                    <button>+</button>
+            <br>
+            <div class="sliderdiv" id="powerControl">
+                <div class="plusminusdiv">
+                    <button class="plusminusbuttons" id="powerMinusBtn" onclick="" style="float: left;">-</button>
+                    <button class="plusminusbuttons" id="powerPlusBtn" style="float: right;">+</button>
                 </div>
-                
                 <br>
-                <label for="power" style="margin: 0 1.5vw 0;">power adjustment:  </label>
+                <label for="power">power adjustment:  </label>
+                <br>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
                 ></input>
-                
                 <p id="power_display">0</p>
             </div>
-            <div id="trimControl">
-                <label for="trim" style="margin: 0 1.5vw 0;">Trim adjustment:  </label>
-                <button>-</button>
-                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.05"
+            <br>
+            <div class="sliderdiv" id="trimControl">
+                <div class="plusminusdiv">
+                    <button class="plusminusbuttons" id="trimMinusBtn" style="float: left;">-</button>
+                    <button class="plusminusbuttons" id="trimPlusBtn" style="float: right;">+</button>
+                </div>
+                <br>
+                <label for="trim">Trim adjustment:  </label>
+                <br>
+                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
                 ></input>
-                <button>+</button>
                 <p id="trim_display">0</p>
             </div>
-
         </div>
-        
         <div id="toggleControls">
             <div id="lightControl">
                 <button id="lights" name="lights" value="lights"  class="toggle_button"
@@ -184,19 +185,15 @@
         </div> 
         <div id="instructions">
             <h2>Instructions</h2>
-            <p>Move the joystick with your mouse or finger to move the robot.</p>
-            <p>On a desktop browser, the WASD keys can be used to move the robot 
-                and the - and + keys can be used to adjust the power.</p>
-            <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p>
+            <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim.</p>
+            <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
             <p>The toggle controls below control the lights and the buzzer horn.</p>    
         </div>
-    </div>
-           
+    </div>      
 </body>
 <script type="text/javascript">
     let gateway = `ws://${window.location.hostname}/ws`;
     let websocket; 
-
     // status update JSON format
     let robotStatus = {   
         'type': 'status',
@@ -205,7 +202,6 @@
         'lmotor_power': 0,
         'rmotor_power': 0
     }
-
     function initWebSocket() {
         // alert('Websocket initializing');
         websocket = new WebSocket(gateway);
@@ -213,34 +209,27 @@
         websocket.onclose = onClose; 
         websocket.onmessage = onMessage;
     }
-
     // runs when websocket opens
     function onOpen(event) {
         // alert('Connection opened');
         // JSON to request for a status update
         requestStatus();
     }
-
     function requestStatus() {
         jsondata = {'command': 'update'}
         websocket.send(jsondata);
         updateStatusIndicators();
     }
-
-    setInterval(requestStatus, 200); 
-
     // runs when websocket closes
     function onClose(event) {
         // alert('Connection closed');
         setTimeout(initWebSocket, 2000); // restart websocket
     }
-
     // runs when websocket receives message from server
     function onMessage(event) {
         console.log(event.data);
         robotStatus = JSON.parse(event.data);
     } 
-
     // update the status indicators on the webpage
     function updateStatusIndicators() {
         let lightsButton = $("#lights");
@@ -264,7 +253,6 @@
             lightsButton.removeClass("onbutton");
         }
     }
-
     $(document).ready(function() {
         getPowerValue(); 
         getTrimValue();
@@ -282,8 +270,8 @@
             } 
         }
         initWebSocket();
+        setInterval(requestStatus, 200); 
     });
-    
     function move(event, direction) {
         event.preventDefault();
         let power = getPowerValue();
