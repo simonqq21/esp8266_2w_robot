@@ -44,16 +44,19 @@
             height: 8vh;
             width: 8vh;
         }
-        .plusminusdiv {
+        .sliderbuttonsdiv {
             display: block;
             
         }
-        .plusminusbuttons {
+        .sliderbuttons {
             height: 5vh;
-            width: 5vh;
+            min-width: 5vh;
             padding: 0;
             font-size: 4vh;
-        }       
+        }    
+        .resetbutton {
+            font-size: 3vh;
+        }   
         .sliderdiv {
             display: inline-block;
         }
@@ -137,12 +140,13 @@
             </div>
             <br>
             <div class="sliderdiv" id="powerControl">
-                <div class="plusminusdiv">
-                    <button class="plusminusbuttons" id="powerMinusBtn" onclick="changePower(-powerInc);" style="float: left;">-</button>
-                    <button class="plusminusbuttons" id="powerPlusBtn" onclick="changePower(powerInc);" style="float: right;">+</button>
+                <div class="sliderbuttonsdiv">
+                    <button class="sliderbuttons" id="powerMinusBtn" onclick="changePower(-powerInc);" style="float: left;">-</button>
+                    <button class="sliderbuttons" id="powerPlusBtn" onclick="changePower(powerInc);" style="float: right;">+</button>
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>
+                <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(128);">Reset</button>
                 <br>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
@@ -151,12 +155,13 @@
             </div>
             <br>
             <div class="sliderdiv" id="trimControl">
-                <div class="plusminusdiv">
-                    <button class="plusminusbuttons" id="trimMinusBtn" onclick="changeTrim(-trimInc);" style="float: left;">-</button>
-                    <button class="plusminusbuttons" id="trimPlusBtn" onclick="changeTrim(trimInc);" style="float: right;">+</button>
+                <div class="sliderbuttonsdiv">
+                    <button class="sliderbuttons" id="trimMinusBtn" onclick="changeTrim(-trimInc);" style="float: left;">-</button>
+                    <button class="sliderbuttons" id="trimPlusBtn" onclick="changeTrim(trimInc);" style="float: right;">+</button>
                 </div>
                 <br>
                 <label for="trim">Trim adjustment:  </label>
+                <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(0);">Reset</button>
                 <br>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"

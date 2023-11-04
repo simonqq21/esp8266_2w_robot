@@ -11,7 +11,7 @@ let gateway = `ws://${window.location.hostname}/ws`;
     // power and trim increment values
     let powerInc = 2.5; 
     let trimInc = 0.025; 
-
+    
     function initWebSocket() {
         // alert('Websocket initializing');
         websocket = new WebSocket(gateway);
@@ -82,7 +82,6 @@ let gateway = `ws://${window.location.hostname}/ws`;
         initWebSocket();
         setInterval(requestStatus, 200); 
     });
-
     /*
     power = power slider value, from 0 to 255, default 100
     trim = trim slider value, from -1 to 1, default 0
@@ -133,35 +132,30 @@ let gateway = `ws://${window.location.hostname}/ws`;
                 $('#forward').addClass('pressedbutton'); 
                 console.log('forward');
                 break;
-            
             case "backward": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
                 $('#backward').addClass('pressedbutton'); 
                 console.log('backward');
                 break; 
-            
             case "left": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
                 $('#left').addClass('pressedbutton'); 
                 console.log('left');
                 break; 
-
             case "right": 
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
                 $('#right').addClass('pressedbutton'); 
                 console.log('right');
                 break; 
-
             case "brake": 
                 motor_settings.lmotor_power = -999; 
                 motor_settings.rmotor_power = -999;
                 $('#brake').addClass('pressedbutton'); 
                 console.log('brake');
                 break; 
-
             case "stop":
             default:
                 $('.dpad_button').removeClass('pressedbutton'); 
@@ -171,25 +165,29 @@ let gateway = `ws://${window.location.hostname}/ws`;
         console.log("motor json = ", JSON.stringify(motor_settings));
         websocket.send(JSON.stringify(motor_settings));
     }
-
+    function setPower(power) {
+        $("#power").val(power); 
+        $("#power_display").text($("#power").val()); 
+        console.log('power=', power);
+    }
+    function setTrim(trim) {
+        $("#trim").val(trim); 
+        $("#trim_display").text($("#trim").val());  
+        console.log("trim=", trim);
+    }
     function changePower(deltaPower) {
         power = getPowerValue(); 
         power += deltaPower; 
         power = Math.min(power, 255); 
         power = Math.max(power, 0);
-        $("#power").val(power); 
-        $("#power_display").text($("#power").val()); 
-        console.log('power=', power);
+        setPower(power);
     }
     function changeTrim(deltaTrim) { 
         trim = getTrimValue();
         trim += deltaTrim; 
         trim = Math.min(trim, 1); 
         trim = Math.max(trim, -1);
-        $("#trim").val(trim); 
-        // update display
-        $("#trim_display").text($("#trim").val());  
-        console.log("trim=", trim);
+        setTrim(trim);
     }
     function getPowerValue() {
         let power = $("#power").val();  
