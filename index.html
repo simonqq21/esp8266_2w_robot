@@ -107,6 +107,7 @@
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'forward');"
                         ontouchend="move(event, '');"
+                        onmouseleave="move(event, '');"
                     ></button>
                     <div class="dpad_element"></div>
                     <button id="left" name="left" class="dpad_element dpad_button"><img src="left.svg" alt="left" class="dpad_image"
@@ -114,19 +115,23 @@
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'left');"
                         ontouchend="move(event, '');"
+                        onmouseleave="move(event, '');"
                     ></button>
                     <!-- <div class="dpad_element"></div> -->
                     <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
                     onmousedown="move(event, 'brake');"
                     onmouseup="move(event, '');"
                     ontouchstart="move(event, 'brake');"
-                    ontouchend="move(event, '');"
+                    ontouchend="move(event, '');" 
+                    
                     ></button>
                     <button id="right" name="right" class="dpad_element dpad_button"><img src="right.svg" alt="right" class="dpad_image"
                         onmousedown="move(event, 'right')"
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'right')"
                         ontouchend="move(event, '');"
+                        onmouseleave="move(event, '');" 
+
                     ></button>
                     <div class="dpad_element"></div>
                     <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
@@ -134,6 +139,8 @@
                         onmouseup="move(event, '');"
                         ontouchstart="move(event, 'backward');"
                         ontouchend="move(event, '');"
+                        onmouseleave="move(event, '');"  
+
                     ></button>
                     <div class="dpad_element"></div>
                 </div>
@@ -141,8 +148,12 @@
             <br>
             <div class="sliderdiv" id="powerControl">
                 <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="powerMinusBtn" onclick="changePower(-powerInc);" style="float: left;">-</button>
-                    <button class="sliderbuttons" id="powerPlusBtn" onclick="changePower(powerInc);" style="float: right;">+</button>
+                    <button class="sliderbuttons" id="powerMinusBtn" style="float: left;" 
+                        onclick="changePower(-powerInc);"
+                        onmousedown="" 
+                        >-</button>
+                    <button class="sliderbuttons" id="powerPlusBtn" style="float: right;" 
+                        onclick="changePower(powerInc);">+</button>
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>

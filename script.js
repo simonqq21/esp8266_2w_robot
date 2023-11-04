@@ -11,7 +11,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
     // power and trim increment values
     let powerInc = 2.5; 
     let trimInc = 0.025; 
-    
+    let turnSpdPercentage = 0.8; 
+
     function initWebSocket() {
         // alert('Websocket initializing');
         websocket = new WebSocket(gateway);
@@ -101,12 +102,12 @@ let gateway = `ws://${window.location.hostname}/ws`;
     rmotor_speed = -power * (1 - trim)
 
     when left is pressed, the right motor moves forward while the left motor moves backward at ideally the same speed. 
-    lmotor_speed = -power * (1 + trim)
-    rmotor_speed = power * (1 - trim)
+    lmotor_speed = -turnSpdPercentage * power * (1 + trim)
+    rmotor_speed = turnSpdPercentage * power * (1 - trim)
 
     when right is pressed, the left motor moves forward while the right motor moves backward at ideally the same speed. 
-    lmotor_speed = power * (1 + trim)
-    rmotor_speed = -power * (1 - trim)
+    lmotor_speed = turnSpdPercentage * power * (1 + trim)
+    rmotor_speed = -turnSpdPercentage * power * (1 - trim)
     
     // angled left and angled right to be continued
     */ 
@@ -139,14 +140,14 @@ let gateway = `ws://${window.location.hostname}/ws`;
                 console.log('backward');
                 break; 
             case "left": 
-                motor_settings.lmotor_power = -power * (1 + trim); 
-                motor_settings.rmotor_power = power * (1 - trim);
+                motor_settings.lmotor_power = -turnSpdPercentage * power * (1 + trim); 
+                motor_settings.rmotor_power = turnSpdPercentage * power * (1 - trim);
                 $('#left').addClass('pressedbutton'); 
                 console.log('left');
                 break; 
             case "right": 
-                motor_settings.lmotor_power = power * (1 + trim); 
-                motor_settings.rmotor_power = -power * (1 - trim);
+                motor_settings.lmotor_power = turnSpdPercentage * power * (1 + trim); 
+                motor_settings.rmotor_power = -turnSpdPercentage * power * (1 - trim);
                 $('#right').addClass('pressedbutton'); 
                 console.log('right');
                 break; 
