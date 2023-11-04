@@ -12,6 +12,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
     let powerInc = 2.5; 
     let trimInc = 0.025; 
     let turnSpdPercentage = 0.8; 
+    let powerTrimChangeInterval; 
+    let powerTrimChangeTimeout;
 
     function initWebSocket() {
         // alert('Websocket initializing');
@@ -204,7 +206,35 @@ let gateway = `ws://${window.location.hostname}/ws`;
         $("#trim_display").text(trim);
         return trim;
     }
+    function holdPowerTrimButtons(ev, mode, value) {
+        ev.preventDefault();
+        switch (mode) {
+            case "power":
+                powerTrimChangeTimeout = setTimeout(function() {
+                    powerTrimChangeInterval = setInterval(changePower, 50, value);
+                }, 500);
+                break;
+            case "trim":
+                powerTrimChangeTimeout = setTimeout(function() {
+                    powerTrimChangeInterval = setInterval(changeTrim, 50, value);
+                }, 500);
+                break;
+            default:
+        }
+    }
 
+    function releasePowerTrimButtons(ev) {
+        ev.preventDefault();
+        clearTimeout(powerTrimChangeTimeout); 
+        clearInterval(powerTrimChangeInterval);
+    }
+    // function startInterval(interval, handler, timeoutDelay, intervalDelay, value) {
+    //     return 
+    // }
+    // function stopInterval(timeout, interval) {
+    //     clearTimeout(timeout); 
+    //     clearInterval(interval);
+    // }
     function keyupHandler(event) {
         let key = event.key;  
         switch(key) {

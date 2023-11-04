@@ -123,7 +123,7 @@
                     onmouseup="move(event, '');"
                     ontouchstart="move(event, 'brake');"
                     ontouchend="move(event, '');" 
-                    
+
                     ></button>
                     <button id="right" name="right" class="dpad_element dpad_button"><img src="right.svg" alt="right" class="dpad_image"
                         onmousedown="move(event, 'right')"
@@ -150,10 +150,20 @@
                 <div class="sliderbuttonsdiv">
                     <button class="sliderbuttons" id="powerMinusBtn" style="float: left;" 
                         onclick="changePower(-powerInc);"
-                        onmousedown="" 
+                        onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
+                        ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
+                        onmouseup="releasePowerTrimButtons(event);"
+                        onmouseleave="releasePowerTrimButtons(event);"
+                        ontouchend="releasePowerTrimButtons(event);"
                         >-</button>
                     <button class="sliderbuttons" id="powerPlusBtn" style="float: right;" 
-                        onclick="changePower(powerInc);">+</button>
+                        onclick="changePower(powerInc);"
+                        onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
+                        ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
+                        onmouseup="releasePowerTrimButtons(event);"
+                        onmouseleave="releasePowerTrimButtons(event);"
+                        ontouchend="releasePowerTrimButtons(event);"
+                        >+</button>
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>
@@ -167,8 +177,22 @@
             <br>
             <div class="sliderdiv" id="trimControl">
                 <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="trimMinusBtn" onclick="changeTrim(-trimInc);" style="float: left;">-</button>
-                    <button class="sliderbuttons" id="trimPlusBtn" onclick="changeTrim(trimInc);" style="float: right;">+</button>
+                    <button class="sliderbuttons" id="trimMinusBtn" style="float: left;"
+                        onclick="changeTrim(-trimInc);"
+                        onmousedown="holdPowerTrimButtons(event, 'trim', -trimInc);" 
+                        ontouchstart="changeTrim(-trimInc); holdPowerTrimButtons(event, 'trim', -trimInc);"
+                        onmouseup="releasePowerTrimButtons(event);"
+                        onmouseleave="releasePowerTrimButtons(event);"
+                        ontouchend="releasePowerTrimButtons(event);"
+                    >-</button>
+                    <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
+                        onclick="changeTrim(trimInc);"
+                        onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
+                        ontouchstart="changeTrim(trimInc); holdPowerTrimButtons(event, 'trim', trimInc);"
+                        onmouseup="releasePowerTrimButtons(event);"
+                        onmouseleave="releasePowerTrimButtons(event);"
+                        ontouchend="releasePowerTrimButtons(event);"
+                    >+</button>
                 </div>
                 <br>
                 <label for="trim">Trim adjustment:  </label>
