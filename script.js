@@ -309,13 +309,13 @@ let gateway = `ws://${window.location.hostname}/ws`;
             case 'l': 
             case 'L': 
                 console.log('lights toggle'); 
-                toggleLights('toggle');
+                toggleLights(event, 'toggle');
                 break;
             // sound horn 
             case 'h': 
             case 'H': 
                 console.log('horn press'); 
-                toggleBeep('on');
+                toggleBeep(event, 'on');
                 break; 
             // ebrake 
             case ' ': 
@@ -326,7 +326,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
     }
     // toggle the lights on the car 
     // state is the string state of the lights, either 'on', 'off', or 'toggle'
-    function toggleLights(state) {
+    function toggleLights(event, state) {
+        event.preventDefault();
         let stateVal = false;
         switch (state) {
             case 'on':
@@ -349,7 +350,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
     }
     // toggle the horn on the car 
     // state is the string state of the horn, either 'on' or 'off'
-    function toggleBeep(state) {
+    function toggleBeep(event, state) {
+        event.preventDefault();
         let stateVal = false;
         switch (state) {
             case 'on':
@@ -371,4 +373,26 @@ let gateway = `ws://${window.location.hostname}/ws`;
         return ('ontouchstart' in window) || 
             (navigator.maxTouchPoints > 0) || 
             (navigator.msMaxTouchPoints > 0);
+    }
+
+    function isTouchInsideElement(event, element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            event.touches[0].clientX >= rect.left &&
+            event.touches[0].clientX <= rect.right &&
+            event.touches[0].clientY >= rect.top &&
+            event.touches[0].clientY <= rect.bottom
+        );
+    }
+
+    function stopOnTouchLeave(event) {
+        if (!isTouchInsideElement(event, event.target)) {
+            move(event, '');
+        }
+    }
+
+    function stopHornOnTouchLeave(event) {
+        if (!isTouchInsideElement(event, event.target)) {
+            toggleBeep(event, 'off')
+        }
     }
