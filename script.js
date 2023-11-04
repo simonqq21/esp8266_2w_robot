@@ -11,7 +11,9 @@ let gateway = `ws://${window.location.hostname}/ws`;
     // power and trim increment values
     let powerInc = 2.5; 
     let trimInc = 0.025; 
-    let turnSpdPercentage = 0.8; 
+    let turnSpdPercentage = 0.7; 
+    let defaultPower = 160;
+    let defaultTrim = 0;
     let powerTrimChangeInterval; 
     let powerTrimChangeTimeout;
 
@@ -241,7 +243,7 @@ let gateway = `ws://${window.location.hostname}/ws`;
             // off horn
             case 'h': 
             case 'H': 
-                toggleBeep('off');
+                toggleBeep(event, 'off');
                 break;
             // stop when movement keys is released 
             // case 'w':
@@ -320,6 +322,17 @@ let gateway = `ws://${window.location.hostname}/ws`;
             // ebrake 
             case ' ': 
                 move(event, 'brake');
+                break;
+            // reset power 
+            case 'r':
+            case 'R':
+                setPower(defaultPower);
+                break;
+            // reset trim 
+            case 't':
+            case 'T':
+                setTrim(defaultTrim);
+                break;
             default:
                 break;
         }

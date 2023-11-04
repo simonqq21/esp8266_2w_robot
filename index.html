@@ -170,7 +170,7 @@
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(128);">Reset</button>
+                <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
                 <br>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
@@ -199,7 +199,7 @@
                 </div>
                 <br>
                 <label for="trim">Trim adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(0);">Reset</button>
+                <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
                 <br>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
