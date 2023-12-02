@@ -7,9 +7,16 @@
         * {
             font-family: Arial, serif;
         }
-        #movementControls, #toggleControls {
-            display: block;
-            text-align: center;
+        #movementControls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* text-align: center; */
+        }
+        #toggleControls {
+            display: flex;
+            justify-content: center;
+            /* text-align: center; */
         }
         #dpad_grid_container {
             display: inline-block;
@@ -105,10 +112,6 @@
         </header>
     </div>
     <div id="body">
-        <div id="sensors"></div>
-
-    </div>
-    <div id="controls" style="display: grid;">
         <div id="sensorsPanel">
             <div id="UDS_div">
                 <div id="UDS1_div">
@@ -128,6 +131,11 @@
                 </div>
             </div>
         </div>
+
+
+    </div>
+    <div id="controls" style="display: grid;">
+        
         <div id="movementControls">
             <div id="dpad_grid_container">
                 <div id="dpad_grid">
