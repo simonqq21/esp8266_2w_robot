@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <style>
         * {
@@ -59,10 +59,13 @@
         }   
         .sliderdiv {
             display: inline-block;
+            min-width: 250px;
+            width: 20vw;
         }
         input[type=range] {
             display: inline-block;
-            width: 40vw;
+            min-width: 250px;
+            width: 20vw;
             margin: 2vh 0 0;
             accent-color: green;
         }
@@ -100,6 +103,10 @@
         <header>
             <h1>ESP8266 WiFi robot</h1>
         </header>
+    </div>
+    <div id="body">
+        <div id="sensors"></div>
+
     </div>
     <div id="controls" style="display: grid;">
         <div id="sensorsPanel">
@@ -182,6 +189,7 @@
                         onmouseleave="releasePowerTrimButtons(event);"
                         ontouchend="releasePowerTrimButtons(event);"
                         >-</button>
+                    <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
                     <button class="sliderbuttons" id="powerPlusBtn" style="float: right;" 
                         onclick="changePower(powerInc);"
                         onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
@@ -193,7 +201,7 @@
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
+                
                 <br>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
@@ -211,6 +219,7 @@
                         onmouseleave="releasePowerTrimButtons(event);"
                         ontouchend="releasePowerTrimButtons(event);"
                     >-</button>
+                    <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
                     <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
                         onclick="changeTrim(trimInc);"
                         onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
@@ -222,7 +231,6 @@
                 </div>
                 <br>
                 <label for="trim">Trim adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
                 <br>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
