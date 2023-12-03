@@ -48,9 +48,9 @@
         }
         .toggle_button {
             min-height: 80px;
-            height: 10vh;
+            height: 9vh;
             min-width: 80px;
-            width: 10vh;
+            width: 9vh;
         }
         .toggle_button_image {
             height: 85%;
@@ -59,19 +59,19 @@
         .sliderbuttonsdiv {
             display: flex;
             justify-content: space-between;
-            
+            margin: 3% 0 7%;
         }
         .sliderbuttons {
             height: 5vh;
             min-width: 5vh;
-            padding: 0;
             font-size: 4vh;
         }    
         .resetbutton {
             font-size: 3vh;
         }   
         .sliderdiv {
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
             min-width: 250px;
             width: 20vw;
         }
@@ -79,7 +79,7 @@
             display: inline-block;
             min-width: 250px;
             width: 20vw;
-            margin: 2vh 0 0;
+            margin: 0 0 5%;
             accent-color: green;
         }
         /* #power::-moz-range-thumb {  
@@ -218,12 +218,10 @@
                 </div>
                 <br>
                 <label for="power">power adjustment:  </label>
-                
-                <br>
+                <p id="power_display">0</p>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
                 ></input>
-                <p id="power_display">0</p>
             </div>
             <br>
             <div class="sliderdiv" id="trimControl">
@@ -247,12 +245,12 @@
                     >+</button>
                 </div>
                 <br>
-                <label for="trim">Trim adjustment:  </label>
-                <br>
+                <!-- <label for="trim">Trim adjustment:  </label> -->
+                <p>Trim adjustment:  </p>
+                <p id="trim_display">0</p>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
                 ></input>
-                <p id="trim_display">0</p>
             </div>
         </div>
         <div id="toggleControls">
