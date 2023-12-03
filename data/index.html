@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>ESP8266 Robot Web Interface</title>
     <style>
         * {
             font-family: Arial, serif;
@@ -66,6 +66,12 @@
             min-width: 5vh;
             font-size: 4vh;
         }    
+        .readout {
+            margin: 5%;
+        }
+        .readout * {
+            display: inline;
+        }
         .resetbutton {
             font-size: 3vh;
         }   
@@ -217,8 +223,10 @@
                         >+</button>
                 </div>
                 <br>
-                <label for="power">power adjustment:  </label>
-                <p id="power_display">0</p>
+                <div class="readout">
+                    <label for="power">power adjustment:  </label>
+                    <p id="power_display">0</p>
+                </div>
                 <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
                     oninput="getPowerValue()"
                 ></input>
@@ -245,9 +253,10 @@
                     >+</button>
                 </div>
                 <br>
-                <!-- <label for="trim">Trim adjustment:  </label> -->
-                <p>Trim adjustment:  </p>
-                <p id="trim_display">0</p>
+                <div class="readout">
+                    <label for="trim">Trim adjustment:  </label>
+                    <p id="trim_display">0</p>
+                </div>
                 <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
                     oninput="getTrimValue()"
                 ></input>
