@@ -8,15 +8,16 @@
             font-family: Arial, serif;
         }
         #movementControls {
+            /* display: block;
+            text-align: center; */
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* text-align: center; */
         }
         #toggleControls {
+            /* display: block; */
             display: flex;
             justify-content: center;
-            /* text-align: center; */
         }
         #dpad_grid_container {
             display: inline-block;
@@ -31,7 +32,9 @@
         }
         .dpad_element {
             height: 10vh;
+            min-height: 90px;
             width: 10vh;
+            min-width: 90px;
             margin: 0;
         }
         .dpad_button {
@@ -39,20 +42,23 @@
             padding: 0;
         }
         .dpad_image {
-            height: 10vh;
-            width: 10vh;
+            height: 85%;
+            width: 85%;
             padding: 0;
         }
         .toggle_button {
+            min-height: 80px;
             height: 10vh;
+            min-width: 80px;
             width: 10vh;
         }
         .toggle_button_image {
-            height: 8vh;
-            width: 8vh;
+            height: 85%;
+            width: 85%;
         }
         .sliderbuttonsdiv {
-            display: block;
+            display: flex;
+            justify-content: space-between;
             
         }
         .sliderbuttons {
@@ -85,8 +91,11 @@
             height: 0.5vw;
         }  */
         #toggleControls > div {
-            display: inline-block;
-            margin: 0 2vw;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            text-align: center;
+            margin: 0 3%;
         }
         .offbutton {
             background-color: #ff0000;
@@ -189,7 +198,7 @@
             <br>
             <div class="sliderdiv" id="powerControl">
                 <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="powerMinusBtn" style="float: left;" 
+                    <button class="sliderbuttons" id="powerMinusBtn"" 
                         onclick="changePower(-powerInc);"
                         onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
                         ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
@@ -198,7 +207,7 @@
                         ontouchend="releasePowerTrimButtons(event);"
                         >-</button>
                     <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
-                    <button class="sliderbuttons" id="powerPlusBtn" style="float: right;" 
+                    <button class="sliderbuttons" id="powerPlusBtn" 
                         onclick="changePower(powerInc);"
                         onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
                         ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
@@ -254,7 +263,7 @@
                 <br>
                 <label for="lights">Lights</label>
             </div>
-            <div if="beepControl">
+            <div id="beepControl">
                 <button id="beep" name="beep" value="beep" class="toggle_button"
                     onmousedown="toggleBeep(event, 'on')"
                     onmouseup="toggleBeep(event, 'off')"
