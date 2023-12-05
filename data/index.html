@@ -7,39 +7,57 @@
         * {
             font-family: Arial, serif;
         }
+        div {
+            margin: 0.3vh;
+        }
         #body {
             display: flex;
             flex-flow: row-reverse wrap;
             justify-content: left;
+            gap: 10px 10px;
         }
         #sensorsPanel {
-            flex-grow: 1;
+
         }
         #controlsPanel {
-            flex-grow: 2;
+            background-color: yellow;
         }
         #movementControls {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 0 10px;
         }
         #toggleControls {
             display: flex;
+            justify-content: space-around;
+        }
+        #toggleControls > div {
+            display: flex;
+            flex-direction: column; 
             justify-content: center;
+            text-align: center;      
+        }
+        .toggle_button {
+            min-height: 40px;
+            height: 6vh;
+            min-width: 40px;
+            width: 6vh;
+        }
+        .toggle_button_image {
+            height: 85%;
+            width: 85%;
         }
         #dpad_grid {
             display: grid;
-            grid-template-columns: auto auto auto;
+            grid-template-columns: repeat(3, auto);
             align-items: center;
-        }
-        div {
-            margin: 0.5vw;
+            justify-content: center;
         }
         .dpad_element {
-            height: 10vh;
-            min-height: 90px;
-            width: 10vh;
-            min-width: 90px;
+            height: 8.5vh;
+            min-height: 80px;
+            width: 8.5vh;
+            min-width: 80px;
             margin: 0;
         }
         .dpad_button {
@@ -51,28 +69,20 @@
             width: 85%;
             padding: 0;
         }
-        .toggle_button {
-            min-height: 80px;
-            height: 9vh;
-            min-width: 80px;
-            width: 9vh;
-        }
-        .toggle_button_image {
-            height: 85%;
-            width: 85%;
-        }
+        
         .sliderbuttonsdiv {
             display: flex;
             justify-content: space-between;
-            margin: 3% 0 7%;
+            margin: 2vh 0 2vh;
         }
         .sliderbuttons {
-            height: 5vh;
+            height: 4vh;
+            min-height: 20px;
             min-width: 5vh;
-            font-size: 4vh;
+            font-size: 3vh;
         }    
         .readout {
-            margin: 5%;
+            margin: 1vh;
         }
         .readout * {
             display: inline;
@@ -90,16 +100,10 @@
             display: inline-block;
             min-width: 250px;
             width: 20vw;
-            margin: 0 0 5%;
+            /* margin: 0 0 1; */
             accent-color: green;
         }
-        #toggleControls > div {
-            display: flex;
-            flex-direction: column; 
-            justify-content: center;
-            text-align: center;
-            margin: 0 3%;
-        }
+        
         .offbutton {
             background-color: #ff0000;
         }
@@ -166,7 +170,6 @@
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');"
                     ></button>
-                    <!-- <div class="dpad_element"></div> -->
                     <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
                     onmousedown="move(event, 'brake');"
                     onmouseup="move(event, '');"
@@ -180,7 +183,6 @@
                         ontouchmove="stopOnTouchLeave(event);"
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');" 
-
                     ></button>
                     <div class="dpad_element"></div>
                     <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
@@ -190,10 +192,9 @@
                         ontouchmove="stopOnTouchLeave(event);"
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');"  
-
                     ></button>
                     <div class="dpad_element"></div>
-                    </div>
+                </div>
                 <br>
                 <div class="sliderdiv" id="powerControl">
                     <div class="sliderbuttonsdiv">
