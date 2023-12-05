@@ -7,20 +7,25 @@
         * {
             font-family: Arial, serif;
         }
+        #body {
+            display: flex;
+            flex-flow: row-reverse wrap;
+            justify-content: left;
+        }
+        #sensorsPanel {
+            flex-grow: 1;
+        }
+        #controlsPanel {
+            flex-grow: 2;
+        }
         #movementControls {
-            /* display: block;
-            text-align: center; */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         #toggleControls {
-            /* display: block; */
             display: flex;
             justify-content: center;
-        }
-        #dpad_grid_container {
-            display: inline-block;
         }
         #dpad_grid {
             display: grid;
@@ -88,14 +93,6 @@
             margin: 0 0 5%;
             accent-color: green;
         }
-        /* #power::-moz-range-thumb {  
-            border-radius: 50%;
-            height: 1.5vw;
-            width: 1.5vw;
-        } 
-        #power::-moz-range-track {
-            height: 0.5vw;
-        }  */
         #toggleControls > div {
             display: flex;
             flex-direction: column; 
@@ -148,11 +145,8 @@
         </div>
 
 
-    </div>
-    <div id="controls" style="display: grid;">
-        
-        <div id="movementControls">
-            <div id="dpad_grid_container">
+        <div id="controlsPanel">  
+            <div id="movementControls">
                 <div id="dpad_grid">
                     <div class="dpad_element"></div>
                     <button id="forward" name="forward" class="dpad_element dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
@@ -199,96 +193,99 @@
 
                     ></button>
                     <div class="dpad_element"></div>
+                    </div>
+                <br>
+                <div class="sliderdiv" id="powerControl">
+                    <div class="sliderbuttonsdiv">
+                        <button class="sliderbuttons" id="powerMinusBtn"" 
+                            onclick="changePower(-powerInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
+                            ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
+                            >-</button>
+                        <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
+                        <button class="sliderbuttons" id="powerPlusBtn" 
+                            onclick="changePower(powerInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
+                            ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
+                            >+</button>
+                    </div>
+                    <br>
+                    <div class="readout">
+                        <label for="power">power adjustment:  </label>
+                        <p id="power_display">0</p>
+                    </div>
+                    <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
+                        oninput="getPowerValue()"
+                    ></input>
                 </div>
-            </div>
-            <br>
-            <div class="sliderdiv" id="powerControl">
-                <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="powerMinusBtn"" 
-                        onclick="changePower(-powerInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
-                        ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
+                <br>
+                <div class="sliderdiv" id="trimControl">
+                    <div class="sliderbuttonsdiv">
+                        <button class="sliderbuttons" id="trimMinusBtn" style="float: left;"
+                            onclick="changeTrim(-trimInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'trim', -trimInc);" 
+                            ontouchstart="changeTrim(-trimInc); holdPowerTrimButtons(event, 'trim', -trimInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
                         >-</button>
-                    <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
-                    <button class="sliderbuttons" id="powerPlusBtn" 
-                        onclick="changePower(powerInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
-                        ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
+                        <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
+                        <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
+                            onclick="changeTrim(trimInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
+                            ontouchstart="changeTrim(trimInc); holdPowerTrimButtons(event, 'trim', trimInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
                         >+</button>
+                    </div>
+                    <br>
+                    <div class="readout">
+                        <label for="trim">Trim adjustment:  </label>
+                        <p id="trim_display">0</p>
+                    </div>
+                    <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
+                        oninput="getTrimValue()"
+                    ></input>
                 </div>
-                <br>
-                <div class="readout">
-                    <label for="power">power adjustment:  </label>
-                    <p id="power_display">0</p>
+            </div>
+            <div id="toggleControls">
+                <div id="lightControl">
+                    <button id="lights" name="lights" value="lights"  class="toggle_button"
+                        onclick="toggleLights(event, 'toggle');"
+                    ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
+                    <br>
+                    <label for="lights">Lights</label>
                 </div>
-                <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
-                    oninput="getPowerValue()"
-                ></input>
-            </div>
-            <br>
-            <div class="sliderdiv" id="trimControl">
-                <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="trimMinusBtn" style="float: left;"
-                        onclick="changeTrim(-trimInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'trim', -trimInc);" 
-                        ontouchstart="changeTrim(-trimInc); holdPowerTrimButtons(event, 'trim', -trimInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
-                    >-</button>
-                    <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
-                    <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
-                        onclick="changeTrim(trimInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
-                        ontouchstart="changeTrim(trimInc); holdPowerTrimButtons(event, 'trim', trimInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
-                    >+</button>
+                <div id="beepControl">
+                    <button id="beep" name="beep" value="beep" class="toggle_button"
+                        onmousedown="toggleBeep(event, 'on')"
+                        onmouseup="toggleBeep(event, 'off')"
+                        ontouchstart="toggleBeep(event, 'on')"
+                        ontouchmove="stopHornOnTouchLeave(event);"
+                        ontouchend="toggleBeep(event, 'off')"
+                    ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
+                    </button>
+                    <br>
+                    <label for="beep">Beep</label>
                 </div>
-                <br>
-                <div class="readout">
-                    <label for="trim">Trim adjustment:  </label>
-                    <p id="trim_display">0</p>
-                </div>
-                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
-                    oninput="getTrimValue()"
-                ></input>
-            </div>
-        </div>
-        <div id="toggleControls">
-            <div id="lightControl">
-                <button id="lights" name="lights" value="lights"  class="toggle_button"
-                    onclick="toggleLights(event, 'toggle');"
-                ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
-                <br>
-                <label for="lights">Lights</label>
-            </div>
-            <div id="beepControl">
-                <button id="beep" name="beep" value="beep" class="toggle_button"
-                    onmousedown="toggleBeep(event, 'on')"
-                    onmouseup="toggleBeep(event, 'off')"
-                    ontouchstart="toggleBeep(event, 'on')"
-                    ontouchmove="stopHornOnTouchLeave(event);"
-                    ontouchend="toggleBeep(event, 'off')"
-                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
-                </button>
-                <br>
-                <label for="beep">Beep</label>
-            </div>
+            </div> 
         </div> 
-        <div id="instructions">
-            <h2>Instructions</h2>
-            <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim, h for horn, and l for lights.</p>
-            <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
-            <p>The toggle controls below control the lights and the buzzer horn.</p>    
-        </div>
-    </div>      
+
+    </div>
+       
+    
+    <div id="instructions">
+        <h2>Instructions</h2>
+        <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim, h for horn, and l for lights.</p>
+        <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
+        <p>The toggle controls below control the lights and the buzzer horn.</p>    
+    </div>
 </body>
 </html>
