@@ -6,7 +6,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
         'lightState': false,
         'beepState': false,
         'lmotor_power': 0,
-        'rmotor_power': 0
+        'rmotor_power': 0,
+        'uds_distance': 0.0
     }
     // power and trim increment values
     let powerInc = 2.5; 
@@ -31,7 +32,7 @@ let gateway = `ws://${window.location.hostname}/ws`;
         requestStatus();
     }
     function requestStatus() {
-        jsondata = {'command': 'update'}
+        jsondata = {'type': 'status'}
         websocket.send(jsondata);
         updateStatusIndicators();
     }
@@ -44,6 +45,8 @@ let gateway = `ws://${window.location.hostname}/ws`;
     function onMessage(event) {
         console.log(event.data);
         robotStatus = JSON.parse(event.data);
+        // update sensor readings 
+        updateSensorReadings();
     } 
     // update the status indicators on the webpage
     function updateStatusIndicators() {
@@ -68,6 +71,14 @@ let gateway = `ws://${window.location.hostname}/ws`;
             lightsButton.removeClass("onbutton");
         }
     }
+    
+    // update sensor value fields 
+    function updateSensorReadings() {
+        let UDS_reading = parseFloat(robotStatus.uds_distance);
+        $("#UDS1_display").text(UDS_reading);
+    }
+
+
     $(document).ready(function() {
         getPowerValue(); 
         getTrimValue();
