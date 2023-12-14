@@ -43,7 +43,7 @@ let gateway = `ws://${window.location.hostname}/ws`;
     }
     // runs when websocket receives message from server
     function onMessage(event) {
-        console.log(event.data);
+        // console.log(event.data);
         robotStatus = JSON.parse(event.data);
         // update sensor readings 
         updateSensorReadings();
@@ -142,54 +142,54 @@ let gateway = `ws://${window.location.hostname}/ws`;
         }
         switch (direction) {
             case "forward":
-                console.log("trim = ", trim);
+                // console.log("trim = ", trim);
                 motor_settings.lmotor_power = power * (1 + trim); 
                 motor_settings.rmotor_power = power * (1 - trim);
                 $('#forward').addClass('pressedbutton'); 
-                console.log('forward');
+                // console.log('forward');
                 break;
             case "backward": 
                 motor_settings.lmotor_power = -power * (1 + trim); 
                 motor_settings.rmotor_power = -power * (1 - trim);
                 $('#backward').addClass('pressedbutton'); 
-                console.log('backward');
+                // console.log('backward');
                 break; 
             case "left": 
                 motor_settings.lmotor_power = -turnSpdPercentage * power * (1 + trim); 
                 motor_settings.rmotor_power = turnSpdPercentage * power * (1 - trim);
                 $('#left').addClass('pressedbutton'); 
-                console.log('left');
+                // console.log('left');
                 break; 
             case "right": 
                 motor_settings.lmotor_power = turnSpdPercentage * power * (1 + trim); 
                 motor_settings.rmotor_power = -turnSpdPercentage * power * (1 - trim);
                 $('#right').addClass('pressedbutton'); 
-                console.log('right');
+                // console.log('right');
                 break; 
             case "brake": 
                 motor_settings.lmotor_power = -999; 
                 motor_settings.rmotor_power = -999;
                 $('#brake').addClass('pressedbutton'); 
-                console.log('brake');
+                // console.log('brake');
                 break; 
             case "stop":
             default:
                 $('.dpad_button').removeClass('pressedbutton'); 
-                console.log('stop'); 
+                // console.log('stop'); 
                 break;
         }
-        console.log("motor json = ", JSON.stringify(motor_settings));
+        // console.log("motor json = ", JSON.stringify(motor_settings));
         websocket.send(JSON.stringify(motor_settings));
     }
     function setPower(power) {
         $("#power").val(power); 
         $("#power_display").text($("#power").val()); 
-        console.log('power=', power);
+        // console.log('power=', power);
     }
     function setTrim(trim) {
         $("#trim").val(trim); 
         $("#trim_display").text($("#trim").val());  
-        console.log("trim=", trim);
+        // console.log("trim=", trim);
     }
     function changePower(deltaPower) {
         power = getPowerValue(); 
@@ -257,16 +257,15 @@ let gateway = `ws://${window.location.hostname}/ws`;
                 toggleBeep(event, 'off');
                 break;
             // stop when movement keys is released 
-            // case 'w':
-            // case 'W':
-            // case 'a':
-            // case 'A':
-            // case 's':
-            // case 'S':
-            // case 'd':
-            // case 'D':
-            // case ' ':
-            default:
+            case 'w':
+            case 'W':
+            case 'a':
+            case 'A':
+            case 's':
+            case 'S':
+            case 'd':
+            case 'D':
+            case ' ':
                 move(event, '');
         }
     }
@@ -277,57 +276,47 @@ let gateway = `ws://${window.location.hostname}/ws`;
             // forward
             case 'w':
             case 'W':
-                console.log('forward');
                 move(event, 'forward');
                 break;
             // left 
             case 'a':
             case 'A':
-                console.log('left');
                 move(event, 'left');
                 break;
             // reverse 
             case 's':
             case 'S':
-                console.log('backward');
                 move(event, 'backward');
                 break;
             // right
             case 'd':
             case 'D':
-                console.log('right');
                 move(event, 'right');
                 break;
             // decrease power 
             case '-': 
-                console.log('power -'); 
                 changePower(-powerInc);
                 break;
             // increase power 
             case '=': 
-                console.log('power +'); 
                 changePower(powerInc);
                 break;
             // decrease trim 
             case '[': 
-                console.log('trim -'); 
                 changeTrim(-trimInc);
                 break;
             // increase trim 
             case ']': 
-                console.log('trim +'); 
                 changeTrim(trimInc);
                 break;
             // toggle lights 
             case 'l': 
             case 'L': 
-                console.log('lights toggle'); 
                 toggleLights(event, 'toggle');
                 break;
             // sound horn 
             case 'h': 
             case 'H': 
-                console.log('horn press'); 
                 toggleBeep(event, 'on');
                 break; 
             // ebrake 
