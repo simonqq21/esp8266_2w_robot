@@ -1,30 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP8266 Robot Web Interface</title>
     <style>
         * {
             font-family: Arial, serif;
         }
-        #movementControls, #toggleControls {
-            display: block;
-            text-align: center;
+        div {
+            margin: 0.3vh;
         }
-        #dpad_grid_container {
-            display: inline-block;
+        #body {
+            display: flex;
+            flex-flow: row-reverse wrap;
+            justify-content: left;
+            gap: 10px 10px;
+        }
+        #sensorsPanel {
+
+        }
+        #controlsPanel {
+            background-color: yellow;
+        }
+        #movementControls {
+            display: flex;
+            flex-direction: column;
+            gap: 0 10px;
+        }
+        #toggleControls {
+            display: flex;
+            justify-content: space-around;
+        }
+        #toggleControls > div {
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            text-align: center;      
+        }
+        .toggle_button {
+            min-height: 40px;
+            height: 6vh;
+            min-width: 40px;
+            width: 6vh;
+        }
+        .toggle_button_image {
+            height: 85%;
+            width: 85%;
         }
         #dpad_grid {
             display: grid;
-            grid-template-columns: auto auto auto;
+            grid-template-columns: repeat(3, auto);
             align-items: center;
-        }
-        div {
-            margin: 0.5vw;
+            justify-content: center;
         }
         .dpad_element {
-            height: 10vh;
-            width: 10vh;
+            height: 8.5vh;
+            min-height: 80px;
+            width: 8.5vh;
+            min-width: 80px;
             margin: 0;
         }
         .dpad_button {
@@ -32,52 +65,45 @@
             padding: 0;
         }
         .dpad_image {
-            height: 10vh;
-            width: 10vh;
+            height: 85%;
+            width: 85%;
             padding: 0;
         }
-        .toggle_button {
-            height: 10vh;
-            width: 10vh;
-        }
-        .toggle_button_image {
-            height: 8vh;
-            width: 8vh;
-        }
+        
         .sliderbuttonsdiv {
-            display: block;
-            
+            display: flex;
+            justify-content: space-between;
+            margin: 2vh 0 2vh;
         }
         .sliderbuttons {
-            height: 5vh;
+            height: 4vh;
+            min-height: 20px;
             min-width: 5vh;
-            padding: 0;
-            font-size: 4vh;
+            font-size: 3vh;
         }    
+        .readout {
+            margin: 1vh;
+        }
+        .readout * {
+            display: inline;
+        }
         .resetbutton {
             font-size: 3vh;
         }   
         .sliderdiv {
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            min-width: 250px;
+            width: 20vw;
         }
         input[type=range] {
             display: inline-block;
-            width: 40vw;
-            margin: 2vh 0 0;
+            min-width: 250px;
+            width: 20vw;
+            /* margin: 0 0 1; */
             accent-color: green;
         }
-        /* #power::-moz-range-thumb {  
-            border-radius: 50%;
-            height: 1.5vw;
-            width: 1.5vw;
-        } 
-        #power::-moz-range-track {
-            height: 0.5vw;
-        }  */
-        #toggleControls > div {
-            display: inline-block;
-            margin: 0 2vw;
-        }
+        
         .offbutton {
             background-color: #ff0000;
         }
@@ -85,7 +111,11 @@
             background-color: #00ff00;
         }
         .pressedbutton {
-            background-color: #00ffff;
+            background-color: #ffffff;
+        }
+
+        #sensorsPanel > div > div > * {
+            display: inline;
         }
     </style>
     <script type="text/javascript" src="jquery_min.js"></script>
@@ -97,9 +127,30 @@
             <h1>ESP8266 WiFi robot</h1>
         </header>
     </div>
-    <div id="controls">
-        <div id="movementControls">
-            <div id="dpad_grid_container">
+    <div id="body">
+        <div id="sensorsPanel">
+            <div id="UDS_div">
+                <div id="UDS1_div">
+                    <p>UDS 1 reading: </p>
+                    <p id="UDS1_display">0</p>
+                    <p> cm</p>
+                </div>
+            </div>
+            <div id="linesensor_div">
+                <div>
+                    <p>Line sensor 1 reading: </p>
+                    <p id="LS1_display">0</p>
+                </div>
+                <div>
+                    <p>Line sensor 2 reading: </p>
+                    <p id="LS2_display">0</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="controlsPanel">  
+            <div id="movementControls">
                 <div id="dpad_grid">
                     <div class="dpad_element"></div>
                     <button id="forward" name="forward" class="dpad_element dpad_button"><img src="forward.svg" alt="forward" class="dpad_image"
@@ -119,7 +170,6 @@
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');"
                     ></button>
-                    <!-- <div class="dpad_element"></div> -->
                     <button id="brake" name="brake" class="dpad_element dpad_button"><img src="brake.svg" alt="brake" class="dpad_image"
                     onmousedown="move(event, 'brake');"
                     onmouseup="move(event, '');"
@@ -133,7 +183,6 @@
                         ontouchmove="stopOnTouchLeave(event);"
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');" 
-
                     ></button>
                     <div class="dpad_element"></div>
                     <button id="backward" name="backward" class="dpad_element dpad_button"><img src="backward.svg" alt="backward" class="dpad_image"
@@ -143,97 +192,101 @@
                         ontouchmove="stopOnTouchLeave(event);"
                         ontouchend="move(event, '');"
                         onmouseleave="move(event, '');"  
-
                     ></button>
                     <div class="dpad_element"></div>
                 </div>
-            </div>
-            <br>
-            <div class="sliderdiv" id="powerControl">
-                <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="powerMinusBtn" style="float: left;" 
-                        onclick="changePower(-powerInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
-                        ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
+                <br>
+                <div class="sliderdiv" id="powerControl">
+                    <div class="sliderbuttonsdiv">
+                        <button class="sliderbuttons" id="powerMinusBtn"" 
+                            onclick="changePower(-powerInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'power', -powerInc);" 
+                            ontouchstart="changePower(-powerInc); holdPowerTrimButtons(event, 'power', -powerInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
+                            >-</button>
+                        <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
+                        <button class="sliderbuttons" id="powerPlusBtn" 
+                            onclick="changePower(powerInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
+                            ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
+                            >+</button>
+                    </div>
+                    <br>
+                    <div class="readout">
+                        <label for="power">power adjustment:  </label>
+                        <p id="power_display">0</p>
+                    </div>
+                    <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
+                        oninput="getPowerValue()"
+                    ></input>
+                </div>
+                <br>
+                <div class="sliderdiv" id="trimControl">
+                    <div class="sliderbuttonsdiv">
+                        <button class="sliderbuttons" id="trimMinusBtn" style="float: left;"
+                            onclick="changeTrim(-trimInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'trim', -trimInc);" 
+                            ontouchstart="changeTrim(-trimInc); holdPowerTrimButtons(event, 'trim', -trimInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
                         >-</button>
-                    <button class="sliderbuttons" id="powerPlusBtn" style="float: right;" 
-                        onclick="changePower(powerInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'power', powerInc);" 
-                        ontouchstart="changePower(powerInc); holdPowerTrimButtons(event, 'power', powerInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
+                        <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
+                        <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
+                            onclick="changeTrim(trimInc);"
+                            onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
+                            ontouchstart="changeTrim(trimInc); holdPowerTrimButtons(event, 'trim', trimInc);"
+                            onmouseup="releasePowerTrimButtons(event);"
+                            onmouseleave="releasePowerTrimButtons(event);"
+                            ontouchend="releasePowerTrimButtons(event);"
                         >+</button>
+                    </div>
+                    <br>
+                    <div class="readout">
+                        <label for="trim">Trim adjustment:  </label>
+                        <p id="trim_display">0</p>
+                    </div>
+                    <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
+                        oninput="getTrimValue()"
+                    ></input>
                 </div>
-                <br>
-                <label for="power">power adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetPowerBtn" onclick="setPower(defaultPower);">Reset</button>
-                <br>
-                <input type="range" id="power" name="power" class="range1" min="0" max="255" step="1"
-                    oninput="getPowerValue()"
-                ></input>
-                <p id="power_display">0</p>
             </div>
-            <br>
-            <div class="sliderdiv" id="trimControl">
-                <div class="sliderbuttonsdiv">
-                    <button class="sliderbuttons" id="trimMinusBtn" style="float: left;"
-                        onclick="changeTrim(-trimInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'trim', -trimInc);" 
-                        ontouchstart="changeTrim(-trimInc); holdPowerTrimButtons(event, 'trim', -trimInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
-                    >-</button>
-                    <button class="sliderbuttons" id="trimPlusBtn" style="float: right;"
-                        onclick="changeTrim(trimInc);"
-                        onmousedown="holdPowerTrimButtons(event, 'trim', trimInc);" 
-                        ontouchstart="changeTrim(trimInc); holdPowerTrimButtons(event, 'trim', trimInc);"
-                        onmouseup="releasePowerTrimButtons(event);"
-                        onmouseleave="releasePowerTrimButtons(event);"
-                        ontouchend="releasePowerTrimButtons(event);"
-                    >+</button>
+            <div id="toggleControls">
+                <div id="lightControl">
+                    <button id="lights" name="lights" value="lights"  class="toggle_button"
+                        onclick="toggleLights(event, 'toggle');"
+                    ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
+                    <br>
+                    <label for="lights">Lights</label>
                 </div>
-                <br>
-                <label for="trim">Trim adjustment:  </label>
-                <button class="sliderbuttons resetbutton" id="resetTrimBtn" onclick="setTrim(defaultTrim);">Reset</button>
-                <br>
-                <input type="range" id="trim" name="trim" class="range1" min="-1" max="1" step="0.025"
-                    oninput="getTrimValue()"
-                ></input>
-                <p id="trim_display">0</p>
-            </div>
-        </div>
-        <div id="toggleControls">
-            <div id="lightControl">
-                <button id="lights" name="lights" value="lights"  class="toggle_button"
-                    onclick="toggleLights(event, 'toggle');"
-                ><img src="lights.svg" id="lights_icon" alt="Lights" class="toggle_button_image"></button>
-                <br>
-                <label for="lights">Lights</label>
-            </div>
-            <div if="beepControl">
-                <button id="beep" name="beep" value="beep" class="toggle_button"
-                    onmousedown="toggleBeep(event, 'on')"
-                    onmouseup="toggleBeep(event, 'off')"
-                    ontouchstart="toggleBeep(event, 'on')"
-                    ontouchmove="stopHornOnTouchLeave(event);"
-                    ontouchend="toggleBeep(event, 'off')"
-                ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
-                </button>
-                <br>
-                <label for="beep">Beep</label>
-            </div>
+                <div id="beepControl">
+                    <button id="beep" name="beep" value="beep" class="toggle_button"
+                        onmousedown="toggleBeep(event, 'on')"
+                        onmouseup="toggleBeep(event, 'off')"
+                        ontouchstart="toggleBeep(event, 'on')"
+                        ontouchmove="stopHornOnTouchLeave(event);"
+                        ontouchend="toggleBeep(event, 'off')"
+                    ><img src="horn.svg" id="beep_icon" alt="Beep" class="toggle_button_image">
+                    </button>
+                    <br>
+                    <label for="beep">Beep</label>
+                </div>
+            </div> 
         </div> 
-        <div id="instructions">
-            <h2>Instructions</h2>
-            <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim, h for horn, and l for lights.</p>
-            <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
-            <p>The toggle controls below control the lights and the buzzer horn.</p>    
-        </div>
-    </div>      
+
+    </div>
+       
+    
+    <div id="instructions">
+        <h2>Instructions</h2>
+        <p>WASD keys to move the robot, - and + keys to adjust the power, [ and ] keys to adjust the trim, h for horn, and l for lights.</p>
+        <!-- <p>The readout below the joystick displays the distance measured by the ultrasonic sensor.</p> -->
+        <p>The toggle controls below control the lights and the buzzer horn.</p>    
+    </div>
 </body>
 </html>

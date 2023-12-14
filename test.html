@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Main HTML</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x</title>
+<style>
+#div1 p {
+    display: inline;
+}
+</style>
 </head>
 <body>
-  <h1>This is the main HTML</h1>
-  
-  <!-- Embedding HTML using the <object> tag -->
-  <iframe id="your-object-id" data="joystick.html"></iframe>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const embeddedObject = document.getElementById("your-object-id");
-      const embeddedDocument = embeddedObject.contentDocument;
-      
-      // Now you can access and manipulate the embedded document's DOM
-      const embeddedBody = embeddedDocument.querySelector("body");
-      alert(embeddedBody);
-    });
-  </script>
+<div id="div1">
+    <p>The quick brown fox</p>
+    <p>Jumps over the lazy dog.</p>
+</div>
 </body>
 </html>
