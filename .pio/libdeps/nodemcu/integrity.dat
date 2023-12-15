@@ -1,5 +1,5 @@
-arduino-libraries/Servo@^1.2.1
-teckel12/NewPing@^1.9.7
 me-no-dev/ESPAsyncTCP@^1.2.2
+teckel12/NewPing@^1.9.7
 me-no-dev/ESP Async WebServer@^1.2.3
 bblanchon/ArduinoJson@^6.21.3
+arduino-libraries/Servo@^1.2.1

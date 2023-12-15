@@ -241,13 +241,6 @@ let gateway = `ws://${window.location.hostname}/ws`;
         clearTimeout(powerTrimChangeTimeout); 
         clearInterval(powerTrimChangeInterval);
     }
-    // function startInterval(interval, handler, timeoutDelay, intervalDelay, value) {
-    //     return 
-    // }
-    // function stopInterval(timeout, interval) {
-    //     clearTimeout(timeout); 
-    //     clearInterval(interval);
-    // }
     function keyupHandler(event) {
         let key = event.key;  
         switch(key) {
@@ -396,16 +389,4 @@ let gateway = `ws://${window.location.hostname}/ws`;
             event.touches[0].clientY >= rect.top &&
             event.touches[0].clientY <= rect.bottom
         );
-    }
-
-    function stopOnTouchLeave(event) {
-        if (!isTouchInsideElement(event, event.target)) {
-            move(event, '');
-        }
-    }
-
-    function stopHornOnTouchLeave(event) {
-        if (!isTouchInsideElement(event, event.target)) {
-            toggleBeep(event, 'off')
-        }
     }
