@@ -249,6 +249,10 @@ let gateway = `ws://${window.location.hostname}/ws`;
             case 'H': 
                 toggleBeep(event, 'off');
                 break;
+            // keep robot moving while lights are toggled 
+            // case 'l':
+            // case 'L': 
+            //     break;
             // stop when movement keys is released 
             case 'w':
             case 'W':
@@ -260,6 +264,9 @@ let gateway = `ws://${window.location.hostname}/ws`;
             case 'D':
             case ' ':
                 move(event, '');
+                break;
+            default:
+                break;
         }
     }
 
