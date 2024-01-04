@@ -10,9 +10,9 @@ let gateway = `ws://${window.location.hostname}/ws`;
         'uds_distance': 0.0
     }
     // power and trim increment values
-    let powerInc = 2.5; 
-    let trimInc = 0.025; 
-    let turnSpdPercentage = 0.7; 
+    let powerInc = 5; 
+    let trimInc = 0.020; 
+    let turnSpdPercentage = 0.6; 
     let defaultPower = 160;
     let defaultTrim = 0;
     let powerTrimChangeInterval; 
@@ -32,14 +32,15 @@ let gateway = `ws://${window.location.hostname}/ws`;
         requestStatus();
     }
     function requestStatus() {
-        jsondata = {'type': 'status'}
-        websocket.send(jsondata);
+        jsondata = {'type': 'status'};
+        websocket.send(JSON.stringify(jsondata));
         updateStatusIndicators();
     }
     // runs when websocket closes
     function onClose(event) {
-        // alert('Connection closed');
-        setTimeout(initWebSocket, 2000); // restart websocket
+        console.log('Connection closed'); 
+        websocket = null;
+        setTimeout(initWebSocket, 5); // restart websocket
     }
     // runs when websocket receives message from server
     function onMessage(event) {

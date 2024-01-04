@@ -41,7 +41,7 @@ IPAddress gateway(192,168,5,1);
 IPAddress subnet(255,255,255,0);
 //IPAddress primaryDNS(8,8,8,8);
 //IPAddress secondaryDNS(8,8,4,4);
-#define APMODE false
+#define APMODE true
 
 // status variables 
 int raw_lmotor, raw_rmotor;
@@ -56,8 +56,8 @@ const int debounceDelay = 10;
 float UDS_distance = 0.0; // distance measured by UDS 
 
 // wifi credentials
-#define LOCAL_SSID "simon-s22"
-#define LOCAL_PASS "password"
+#define LOCAL_SSID "QUE-STARLINK"
+#define LOCAL_PASS "Quefamily01259"
 
 //for littlefs
 File indexPage;  
@@ -95,8 +95,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     data[len] = 0;
     
     //    deserialize the JSON into a JSON object
-    DeserializationError error = deserializeJson(inputDoc, (char*)data); 
     Serial.println((char*)data);
+    DeserializationError error = deserializeJson(inputDoc, data); 
     if (error) {
       Serial.print("deserializeJson failed: ");
       Serial.println(error.f_str());
@@ -233,7 +233,7 @@ void setup() {
   //  if ESP will start its own hotspot
   if (APMODE) {
     Serial.println("Starting AP");
-    if (!WiFi.softAP("simon")) {
+    if (!WiFi.softAP("simon", NULL, 2)) {
       Serial.println("Soft AP failed to configure.");
     }
     WiFi.softAPConfig(local_IP, gateway, subnet);
