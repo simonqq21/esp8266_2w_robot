@@ -41,7 +41,7 @@ IPAddress gateway(192,168,5,1);
 IPAddress subnet(255,255,255,0);
 //IPAddress primaryDNS(8,8,8,8);
 //IPAddress secondaryDNS(8,8,4,4);
-#define APMODE true
+#define APMODE false
 
 // status variables 
 int raw_lmotor, raw_rmotor;
@@ -56,7 +56,7 @@ const int debounceDelay = 10;
 float UDS_distance = 0.0; // distance measured by UDS 
 
 // wifi credentials
-#define LOCAL_SSID "QUE-STARLINK"
+#define LOCAL_SSID "simon-s22"
 #define LOCAL_PASS "password"
 
 //for littlefs
