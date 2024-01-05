@@ -29,7 +29,7 @@ NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
 unsigned long lastMeasurementTime = 0; 
 
 // async web server
-AsyncWebServer server(80); 
+AsyncWebServer server(8888); 
 AsyncWebSocket ws("/ws"); 
 StaticJsonDocument<140> inputDoc;
 StaticJsonDocument<140> outputDoc;

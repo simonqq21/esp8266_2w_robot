@@ -1,4 +1,4 @@
-let gateway = `ws://${window.location.hostname}/ws`;
+let gateway = `ws://${window.location.hostname}:8888/ws`;
     let websocket; 
     // status update JSON format
     let robotStatus = {   
